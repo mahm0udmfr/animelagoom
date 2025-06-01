@@ -8,14 +8,17 @@ class KitsuApiManager {
   const KitsuApiManager({this.accessToken});
 
   /// 🔍 Unified GET request
-  Future<dynamic> get(String endpoint) async {
-    final uri = Uri.parse('${KitsuApiConstants.baseUrl}$endpoint');
-    final response = await http.get(
-      uri,
-      headers: _headers(),
-    );
+  Future<Map<String, dynamic>> get(
+    String endpoint, {
+    Map<String, String>? queryParams,
+  }) async {
+    final uri = Uri.parse(
+      '${KitsuApiConstants.baseUrl}$endpoint',
+    ).replace(queryParameters: queryParams);
 
-    return _handleResponse(response);
+    final response = await http.get(uri, headers: _headers());
+
+    return _handleResponse(response) as Map<String, dynamic>;
   }
 
   /// ✏️ Unified POST request
@@ -45,10 +48,7 @@ class KitsuApiManager {
   /// 🗑 DELETE request
   Future<dynamic> delete(String endpoint) async {
     final uri = Uri.parse('${KitsuApiConstants.baseUrl}$endpoint');
-    final response = await http.delete(
-      uri,
-      headers: _headers(),
-    );
+    final response = await http.delete(uri, headers: _headers());
 
     return _handleResponse(response);
   }

@@ -1,3 +1,4 @@
+import 'package:animelagoom/ui/HomeScreen/widgets/manga_section.dart';
 import 'package:animelagoom/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'widgets/anime_section.dart';
@@ -39,32 +40,47 @@ class _HomeScreenState extends State<HomeScreen> {
               });
             },
             children: const [
-              Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Text('Anime')),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Text('Manga')),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: Text('Anime'),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: Text('Manga'),
+              ),
             ],
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(12),
-        children: [
-          TextField(
-            controller: searchController,
-            decoration: InputDecoration(
-              hintText: 'Search $contentType...',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-            onSubmitted: _onSearchSubmitted,
-          ),
-          const SizedBox(height: 16),
-
-          AnimeSection(title: 'Trending This Week', category: 'trending'),
-          AnimeSection(title: 'Top Upcoming', category: 'upcoming'),
-          AnimeSection(title: 'Highest Rated', category: 'highestRated'),
-          AnimeSection(title: 'Most Popular', category: 'mostPopular'),
-        ],
+body: ListView(
+  padding: const EdgeInsets.all(12),
+  children: [
+    TextField(
+      controller: searchController,
+      decoration: InputDecoration(
+        hintText: 'Search $contentType...',
+        prefixIcon: const Icon(Icons.search),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
+      onSubmitted: _onSearchSubmitted,
+    ),
+    const SizedBox(height: 16),
+    if (contentType == 'anime') ...[
+      AnimeSection(title: 'Trending This Week', category: 'trending'),
+      AnimeSection(title: 'Top Upcoming', category: 'upcoming'),
+      AnimeSection(title: 'Highest Rated', category: 'highestRated'),
+      AnimeSection(title: 'Most Popular', category: 'mostPopular'),
+    ] else ...[
+      MangaSection(title: "Trending Manga", category: "trending"),
+      MangaSection(title: "Upcoming Manga", category: "upcoming"),
+      MangaSection(title: "Highest Rated Manga", category: "highestRated"),
+      MangaSection(title: "Most Popular Manga", category: "mostPopular"),
+    ],
+  ],
+),
+
     );
   }
 }
