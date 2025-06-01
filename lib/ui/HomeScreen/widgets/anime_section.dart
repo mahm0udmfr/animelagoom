@@ -1,8 +1,8 @@
 import 'package:animelagoom/Core/api/api_manager.dart';
+import 'package:animelagoom/Services/anime_service.dart';
+import 'package:animelagoom/models/anime_model.dart';
+import 'package:animelagoom/ui/HomeScreen/widgets/anime_card.dart';
 import 'package:flutter/material.dart';
-import '../../../models/anime_model.dart';
-import '../../../services/anime_service.dart';
-import 'anime_card.dart';
 
 class AnimeSection extends StatefulWidget {
   final String title;
@@ -19,21 +19,60 @@ class AnimeSection extends StatefulWidget {
 }
 
 class _AnimeSectionState extends State<AnimeSection> {
-  late Future<List<Anime>> _animeFuture;
+  final List<Anime> _animes = [];
+  final ScrollController _scrollController = ScrollController();
+
+  final int _limit = 10;
+  int _offset = 0;
+  bool _isLoading = false;
+  bool _hasMore = true;
+
+  late final AnimeService _animeService;
 
   @override
   void initState() {
     super.initState();
-     final api = KitsuApiManager();
-    final service = AnimeService(api);
-    
-    _animeFuture = switch (widget.category) {
-      'trending' => service.fetchTrendingAnime(),
-      'upcoming' => service.fetchUpcomingAnime(),
-      'highestRated' => service.fetchHighestRatedAnime(),
-      'mostPopular' => service.fetchMostPopularAnime(),
-      _ => Future.value([]),
+    final api = KitsuApiManager();
+    _animeService = AnimeService(api);
+
+    _scrollController.addListener(_onScroll);
+    _fetchAnimes();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 100 &&
+        !_isLoading &&
+        _hasMore) {
+      _fetchAnimes();
+    }
+  }
+
+  Future<void> _fetchAnimes() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final List<Anime> newAnimes = switch (widget.category) {
+      'trending' => await _animeService.fetchTrendingAnime(offset: _offset, limit: _limit),
+      'upcoming' => await _animeService.fetchUpcomingAnime(offset: _offset, limit: _limit),
+      'highestRated' => await _animeService.fetchHighestRatedAnime(offset: _offset, limit: _limit),
+      'mostPopular' => await _animeService.fetchMostPopularAnime(offset: _offset, limit: _limit),
+      _ => [],
     };
+if (!mounted) return;
+    setState(() {
+      _animes.addAll(newAnimes);
+      _offset += _limit;
+      _isLoading = false;
+      _hasMore = newAnimes.length == _limit;
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -45,23 +84,23 @@ class _AnimeSectionState extends State<AnimeSection> {
         const SizedBox(height: 8),
         SizedBox(
           height: 200,
-          child: FutureBuilder<List<Anime>>(
-            future: _animeFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              final items = snapshot.data ?? [];
-              return ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return AnimeCard(anime: items[index]);
-                },
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-              );
-            },
-          ),
+          child: _animes.isEmpty && _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : ListView.separated(
+                  controller: _scrollController,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _animes.length + (_hasMore ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index >= _animes.length) {
+                      return const SizedBox(
+                        width: 60,
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
+                    return AnimeCard(anime: _animes[index]);
+                  },
+                  separatorBuilder: (_, _) => const SizedBox(width: 8),
+                ),
         ),
         const SizedBox(height: 16),
       ],

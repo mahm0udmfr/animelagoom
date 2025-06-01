@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../models/anime_model.dart';
+import '../../../models/manga_model.dart';
 
-class AnimeCard extends StatelessWidget {
-  final Anime anime;
+class MangaCard extends StatelessWidget {
+  final Manga manga;
 
-  const AnimeCard({super.key, required this.anime});
+  const MangaCard({super.key, required this.manga});
 
   @override
   Widget build(BuildContext context) {
@@ -16,17 +16,21 @@ class AnimeCard extends StatelessWidget {
           AspectRatio(
             aspectRatio: 3 / 4,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
               child: Image.network(
-                anime.imageUrl ?? '',
+                manga.imageUrl,
                 fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => Container(color: Colors.grey),
+                errorBuilder: (_, _, _) => const Center(child: Icon(Icons.broken_image)),
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+                },
               ),
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            anime.title,
+            manga.title,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodySmall,
