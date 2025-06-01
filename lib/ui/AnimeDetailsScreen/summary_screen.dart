@@ -1,4 +1,4 @@
-import 'package:animelagoom/ui/AnimeDetailsScreen/reaction%20screen.dart';
+import 'package:animelagoom/ui/AnimeDetailsScreen/reaction_screen.dart';
 import 'package:animelagoom/utils/app_colors.dart';
 import 'package:animelagoom/utils/app_styles.dart';
 import 'package:animelagoom/utils/assets_manager.dart';
@@ -11,6 +11,8 @@ class SummaryScreen extends StatelessWidget{
     'Fantasy', 'Horror', 'Military', 'Post Apocalypse',
     'Shounen', 'Super Power', 'Violence'
   ];
+
+   SummaryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

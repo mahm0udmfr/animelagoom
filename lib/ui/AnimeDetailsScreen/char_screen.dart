@@ -2,7 +2,7 @@ import 'package:animelagoom/utils/app_styles.dart';
 import 'package:animelagoom/utils/assets_manager.dart';
 import 'package:flutter/material.dart';
 
-import 'char card.dart';
+import 'char_card.dart';
 
 class CharacterScreen extends StatelessWidget {
   const CharacterScreen({super.key});

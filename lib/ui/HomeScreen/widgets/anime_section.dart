@@ -99,7 +99,7 @@ if (!mounted) return;
                     }
                     return AnimeCard(anime: _animes[index]);
                   },
-                  separatorBuilder: (_, _) => const SizedBox(width: 8),
+                  separatorBuilder: (_,__) => const SizedBox(width: 8),
                 ),
         ),
         const SizedBox(height: 16),

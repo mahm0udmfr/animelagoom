@@ -20,7 +20,7 @@ class MangaCard extends StatelessWidget {
               child: Image.network(
                 manga.imageUrl,
                 fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => const Center(child: Icon(Icons.broken_image)),
+                errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image)),
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
                   return const Center(child: CircularProgressIndicator(strokeWidth: 2));

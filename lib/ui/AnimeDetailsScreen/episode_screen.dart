@@ -1,7 +1,7 @@
 import 'package:animelagoom/utils/assets_manager.dart';
 import 'package:flutter/material.dart';
 
-import 'episode card.dart';
+import 'episode_card.dart';
 
 class EpisodeScreen extends StatelessWidget {
   const EpisodeScreen({super.key});

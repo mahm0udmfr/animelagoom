@@ -20,7 +20,7 @@ class AnimeCard extends StatelessWidget {
               child: Image.network(
                 anime.imageUrl ?? '',
                 fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => Container(color: Colors.grey),
+                errorBuilder: (_, ___, __) => Container(color: Colors.grey),
               ),
             ),
           ),
