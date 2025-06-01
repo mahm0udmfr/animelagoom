@@ -18,7 +18,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.whiteTheme,
-      initialRoute: HomeScreen.homeRoute,
+      initialRoute:AnimeDetailsScreen.animeDetailsRoute,
+      //HomeScreen.homeRoute,
       routes: {
         HomeScreen.homeRoute: (context) => const HomeScreen(),
         AnimeDetailsScreen.animeDetailsRoute:
