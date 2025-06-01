@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../utils/app_styles.dart';
 
 class ReactionScreen extends StatefulWidget{
+  const ReactionScreen({super.key});
+
   @override
   State<ReactionScreen> createState() => _ReactionScreenState();
 }

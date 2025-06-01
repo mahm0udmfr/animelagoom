@@ -1,6 +1,6 @@
-import 'package:animelagoom/ui/AnimeDetailsScreen/char%20screen.dart';
-import 'package:animelagoom/ui/AnimeDetailsScreen/episode%20screen.dart';
-import 'package:animelagoom/ui/AnimeDetailsScreen/reaction%20screen.dart';
+import 'package:animelagoom/ui/AnimeDetailsScreen/char_screen.dart';
+import 'package:animelagoom/ui/AnimeDetailsScreen/episode_screen.dart';
+import 'package:animelagoom/ui/AnimeDetailsScreen/reaction_screen.dart';
 import 'package:animelagoom/ui/AnimeDetailsScreen/summary_screen.dart';
 import 'package:animelagoom/utils/app_colors.dart';
 import 'package:animelagoom/utils/app_styles.dart';
