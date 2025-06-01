@@ -66,7 +66,7 @@ class _MangaSectionState extends State<MangaSection> {
       default:
         newItems = [];
     }
-
+if (!mounted) return;
     setState(() {
       _mangaList.addAll(newItems);
       _offset += _limit;

@@ -31,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kitsu'),
+        title: const Text('AnimeLagoom'),
         actions: [
           ToggleButtons(
             isSelected: [contentType == 'anime', contentType == 'manga'],
@@ -59,21 +59,54 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
+          SizedBox(width: 10),
         ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(12),
         children: [
-          TextField(
-            controller: searchController,
-            decoration: InputDecoration(
-              hintText: 'Search $contentType...',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
+          // TextField(
+          //   controller: searchController,
+          //   decoration: InputDecoration(
+          //     hintText: 'Search $contentType...',
+          //     prefixIcon: const Icon(Icons.search),
+          //     border: OutlineInputBorder(
+          //       borderRadius: BorderRadius.circular(12),
+          //     ),
+          //   ),
+          //   onSubmitted: _onSearchSubmitted,
+          // ),
+          InkWell(
+            onTap: () => _onSearchSubmitted(searchController.text),
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 16),
+              
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
+            
+                border: Border.all(
+                  color: Colors.grey.shade500,
+                ),
+              ),
+              height: 50,
+            
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Search $contentType',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () => _onSearchSubmitted(searchController.text),
+                  ),
+                ],
               ),
             ),
-            onSubmitted: _onSearchSubmitted,
           ),
           const SizedBox(height: 16),
           if (contentType == 'anime') ...[
