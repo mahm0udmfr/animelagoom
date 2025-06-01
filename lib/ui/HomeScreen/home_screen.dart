@@ -1,3 +1,4 @@
+import 'package:animelagoom/ui/HomeScreen/search_screen.dart';
 import 'package:animelagoom/ui/HomeScreen/widgets/manga_section.dart';
 import 'package:animelagoom/utils/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,13 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController searchController = TextEditingController();
 
   void _onSearchSubmitted(String value) {
-    // navigate to search screen or display results
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SearchScreen(
+            contentType: contentType, initialQuery: searchController.text),
+      ),
+    );
   }
 
   @override
@@ -39,48 +46,50 @@ class _HomeScreenState extends State<HomeScreen> {
                 contentType = index == 0 ? 'anime' : 'manga';
               });
             },
-            children: const [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12),
-                child: Text('Anime'),
+            children: [
+              Container(
+                width: 80,
+                alignment: Alignment.center,
+                child: const Text('Anime'),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12),
-                child: Text('Manga'),
+              Container(
+                width: 80,
+                alignment: Alignment.center,
+                child: const Text('Manga'),
               ),
             ],
           ),
         ],
       ),
-body: ListView(
-  padding: const EdgeInsets.all(12),
-  children: [
-    TextField(
-      controller: searchController,
-      decoration: InputDecoration(
-        hintText: 'Search $contentType...',
-        prefixIcon: const Icon(Icons.search),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+      body: ListView(
+        padding: const EdgeInsets.all(12),
+        children: [
+          TextField(
+            controller: searchController,
+            decoration: InputDecoration(
+              hintText: 'Search $contentType...',
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            onSubmitted: _onSearchSubmitted,
+          ),
+          const SizedBox(height: 16),
+          if (contentType == 'anime') ...[
+            AnimeSection(title: 'Trending This Week', category: 'trending'),
+            AnimeSection(title: 'Top Upcoming', category: 'upcoming'),
+            AnimeSection(title: 'Highest Rated', category: 'highestRated'),
+            AnimeSection(title: 'Most Popular', category: 'mostPopular'),
+          ] else ...[
+            MangaSection(title: "Trending Manga", category: "trending"),
+            MangaSection(title: "Upcoming Manga", category: "upcoming"),
+            MangaSection(
+                title: "Highest Rated Manga", category: "highestRated"),
+            MangaSection(title: "Most Popular Manga", category: "mostPopular"),
+          ],
+        ],
       ),
-      onSubmitted: _onSearchSubmitted,
-    ),
-    const SizedBox(height: 16),
-    if (contentType == 'anime') ...[
-      AnimeSection(title: 'Trending This Week', category: 'trending'),
-      AnimeSection(title: 'Top Upcoming', category: 'upcoming'),
-      AnimeSection(title: 'Highest Rated', category: 'highestRated'),
-      AnimeSection(title: 'Most Popular', category: 'mostPopular'),
-    ] else ...[
-      MangaSection(title: "Trending Manga", category: "trending"),
-      MangaSection(title: "Upcoming Manga", category: "upcoming"),
-      MangaSection(title: "Highest Rated Manga", category: "highestRated"),
-      MangaSection(title: "Most Popular Manga", category: "mostPopular"),
-    ],
-  ],
-),
-
     );
   }
 }

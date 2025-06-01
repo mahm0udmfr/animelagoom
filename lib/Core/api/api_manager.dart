@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:animelagoom/Core/api/api_constatnts.dart';
+import 'package:animelagoom/core/api/api_constatnts.dart';
 import 'package:http/http.dart' as http;
 
 class KitsuApiManager {

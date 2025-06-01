@@ -1,4 +1,4 @@
-import 'package:animelagoom/Core/api/api_manager.dart';
+import 'package:animelagoom/core/api/api_manager.dart';
 import 'package:animelagoom/Services/anime_service.dart';
 import 'package:animelagoom/models/anime_model.dart';
 import 'package:animelagoom/ui/HomeScreen/widgets/anime_card.dart';

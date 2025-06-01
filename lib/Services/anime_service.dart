@@ -1,4 +1,4 @@
-import 'package:animelagoom/Core/api/api_manager.dart';
+import 'package:animelagoom/core/api/api_manager.dart';
 
 import '../models/anime_model.dart';
 
@@ -27,10 +27,19 @@ class AnimeService {
     return _extractAnimeList(json);
   }
 
-  Future<List<Anime>> searchAnime(String query, {int limit = 10, int offset = 0}) async {
-    final json = await _apiManager.get('/anime?filter[text]=$query&page[limit]=$limit&page[offset]=$offset');
-    return _extractAnimeList(json);
-  }
+Future<List<Anime>> searchAnime(String query, {int limit = 10, int offset = 0}) async {
+  final json = await _apiManager.get(
+    '/anime',
+    queryParams: {
+      'filter[text]': query,
+      'page[limit]': '$limit',
+      'page[offset]': '$offset',
+    },
+  );
+
+  return _extractAnimeList(json);
+}
+
 
   List<Anime> _extractAnimeList(Map<String, dynamic> json) {
     return (json['data'] as List).map((e) => Anime.fromJson(e)).toList();

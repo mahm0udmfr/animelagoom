@@ -64,4 +64,22 @@ class MangaService {
     );
     return (data['data'] as List).map((e) => Manga.fromJson(e)).toList();
   }
+
+  Future<List<Manga>> searchManga(String query, {int limit = 10, int offset = 0}) async {
+  final json = await _api.get(
+    '/manga',
+    queryParams: {
+      'filter[text]': query,
+      'page[limit]': '$limit',
+      'page[offset]': '$offset',
+    },
+  );
+
+  return _extractMangaList(json);
+}
+
+List<Manga> _extractMangaList(Map<String, dynamic> json) {
+  return (json['data'] as List).map((e) => Manga.fromJson(e)).toList();
+}
+
 }
