@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:animelagoom/Core/api/api_constatnts.dart';
 import 'package:http/http.dart' as http;
 
+import '../../models/AnimeDetails.dart';
+
 class KitsuApiManager {
   final String? accessToken;
 
@@ -75,4 +77,17 @@ class KitsuApiManager {
       );
     }
   }
+
+
+
+  Future<AnimeDetails?> fetchAnimeDetails(String id) async {
+    try {
+      final jsonData = await get('/anime/$id');
+      return AnimeDetails.fromJson(jsonData);
+    } catch (e) {
+      print('Failed to fetch anime details: $e');
+      return null;
+    }
+  }
+
 }

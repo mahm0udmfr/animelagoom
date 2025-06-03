@@ -18,12 +18,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.whiteTheme,
-      initialRoute:AnimeDetailsScreen.animeDetailsRoute,
-      //HomeScreen.homeRoute,
+      initialRoute:
+      //AnimeDetailsScreen.animeDetailsRoute,
+      HomeScreen.homeRoute,
       routes: {
         HomeScreen.homeRoute: (context) => const HomeScreen(),
-        AnimeDetailsScreen.animeDetailsRoute:
-            (context) => const AnimeDetailsScreen(),
+        AnimeDetailsScreen.animeDetailsRoute: (context) {
+          final animeId = ModalRoute.of(context)!.settings.arguments as String;
+          return AnimeDetailsScreen(animeId: animeId);
+        },
       },
     );
   }
