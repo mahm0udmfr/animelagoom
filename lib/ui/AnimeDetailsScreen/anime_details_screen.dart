@@ -1,3 +1,4 @@
+import 'package:animelagoom/models/anime_and_manga_model.dart';
 import 'package:animelagoom/ui/AnimeDetailsScreen/char_screen.dart';
 import 'package:animelagoom/ui/AnimeDetailsScreen/episode_screen.dart';
 import 'package:animelagoom/ui/AnimeDetailsScreen/reaction_screen.dart';
@@ -8,15 +9,15 @@ import 'package:animelagoom/utils/assets_manager.dart';
 import 'package:flutter/material.dart';
 
 class AnimeDetailsScreen extends StatefulWidget {
-      static String animeDetailsRoute = "animeDetailsRoute";
-  const AnimeDetailsScreen({super.key});
+  static String animeDetailsRoute = "animeDetailsRoute";
+  final MediaItem anime;
+  const AnimeDetailsScreen({super.key, required this.anime});
 
   @override
   State<AnimeDetailsScreen> createState() => _AnimeDetailsScreenState();
 }
 
 class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
-
   String selectedTab = "Summary";
 
   void selectTab(String tab) {
@@ -30,7 +31,6 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
-
           children: [
             Stack(
               children: [
@@ -49,13 +49,12 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                     alignment: Alignment.bottomLeft,
                     child: Text(
                       'comments',
-                      style:AppStyles.regular14WhiteRoboto,
+                      style: AppStyles.regular14WhiteRoboto,
                     ),
                   ),
                 )
               ],
             ),
-
             Container(
               color: Colors.white,
               height: 50,
@@ -82,46 +81,60 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                 children: [
                   Row(
                     children: [
-              Stack(
-              children: [
-              ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                AssetsManager.test,
-                width: 200,
-                height: 300,
-                fit: BoxFit.cover,
-              ),
-            ),
-              Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(4)
-                  ),
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.favorite_border),
-                  color: AppColors.greyColor,
-                  onPressed: () {},
-                ),
-              ),
-              ]
-              ),
+                      Stack(children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            widget.anime.attributes.coverImage?.original ??
+                                AssetsManager.test,
+                            width: 200,
+                            height: 300,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
+                              color: Colors.grey,
+                              width: 120,
+                              height: 180,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                                bottomRight: Radius.circular(4)),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.favorite_border),
+                            color: AppColors.greyColor,
+                            onPressed: () {},
+                          ),
+                        ),
+                      ]),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           children: [
-                            buildActionButton("Completed", Colors.teal, ),
+                            buildActionButton(
+                              "Completed",
+                              Colors.teal,
+                            ),
                             const SizedBox(height: 8),
                             buildActionButton("Want to Watch", Colors.blue),
                             const SizedBox(height: 8),
-                            buildActionButton("Started Watching", Colors.purple),
-                            SizedBox(height: 40,),
-                            Text('Watch Online ',style: AppStyles.regular16greyRoboto,),
-                            SizedBox(height: 10,),
+                            buildActionButton(
+                                "Started Watching", Colors.purple),
+                            SizedBox(
+                              height: 40,
+                            ),
+                            Text(
+                              'Watch Online ',
+                              style: AppStyles.regular16greyRoboto,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -176,12 +189,14 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
     );
   }
 
-
-  Widget buildActionButton(String text, Color color,) {
+  Widget buildActionButton(
+    String text,
+    Color color,
+  ) {
     return SizedBox(
       width: 200,
       child: ElevatedButton(
-        onPressed: (){},
+        onPressed: () {},
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           shape: RoundedRectangleBorder(
@@ -192,7 +207,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
         child: Text(
           text,
           style: const TextStyle(
-            color: AppColors.whiteColor ,
+            color: AppColors.whiteColor,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
@@ -200,7 +215,6 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
       ),
     );
   }
-
 
   Widget buildServiceBox(String imagePath) {
     return Container(
@@ -220,8 +234,6 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
       ),
     );
   }
-
-
 
   Widget buildTabContent() {
     switch (selectedTab) {
@@ -244,5 +256,4 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
         );
     }
   }
-
 }

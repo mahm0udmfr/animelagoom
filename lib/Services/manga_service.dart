@@ -1,12 +1,13 @@
+import 'package:animelagoom/models/anime_and_manga_model.dart';
+
 import '../core/api/api_manager.dart';
-import '../models/manga_model.dart';
 
 class MangaService {
   final KitsuApiManager _api;
 
   MangaService(this._api);
 
-  Future<List<Manga>> fetchTrendingManga({
+  Future<List<MediaItem>> fetchTrendingManga({
     int offset = 0,
     int limit = 10,
   }) async {
@@ -16,10 +17,10 @@ class MangaService {
       'page[offset]': '$offset',
     },);
 
-  return (data['data'] as List).map((e) => Manga.fromJson(e)).toList();
+  return (data['data'] as List).map((e) => MediaItem.fromJson(e)).toList();
   }
 
-  Future<List<Manga>> fetchUpcomingManga({
+  Future<List<MediaItem>> fetchUpcomingManga({
     int offset = 0,
     int limit = 10,
   }) async {
@@ -32,10 +33,10 @@ class MangaService {
       },
     
     );
-    return (data['data'] as List).map((e) => Manga.fromJson(e)).toList();
+    return (data['data'] as List).map((e) => MediaItem.fromJson(e)).toList();
   }
 
-  Future<List<Manga>> fetchHighestRatedManga({
+  Future<List<MediaItem>> fetchHighestRatedManga({
     int offset = 0,
     int limit = 10,
   }) async {
@@ -47,10 +48,10 @@ class MangaService {
         'page[offset]': '$offset',
       },
     );
-    return (data['data'] as List).map((e) => Manga.fromJson(e)).toList();
+    return (data['data'] as List).map((e) => MediaItem.fromJson(e)).toList();
   }
 
-  Future<List<Manga>> fetchMostPopularManga({
+  Future<List<MediaItem>> fetchMostPopularManga({
     int offset = 0,
     int limit = 10,
   }) async {
@@ -62,6 +63,24 @@ class MangaService {
         'page[offset]': '$offset',
       },
     );
-    return (data['data'] as List).map((e) => Manga.fromJson(e)).toList();
+    return (data['data'] as List).map((e) => MediaItem.fromJson(e)).toList();
   }
+
+  Future<List<MediaItem>> searchManga(String query, {int limit = 10, int offset = 0}) async {
+  final json = await _api.get(
+    '/manga',
+    queryParams: {
+      'filter[text]': query,
+      'page[limit]': '$limit',
+      'page[offset]': '$offset',
+    },
+  );
+
+  return _extractMangaList(json);
+}
+
+List<MediaItem> _extractMangaList(Map<String, dynamic> json) {
+  return (json['data'] as List).map((e) => MediaItem.fromJson(e)).toList();
+}
+
 }

@@ -1,7 +1,7 @@
+import 'package:animelagoom/models/anime_and_manga_model.dart';
 import 'package:flutter/material.dart';
 import 'package:animelagoom/core/api/api_manager.dart';
 import 'package:animelagoom/Services/manga_service.dart';
-import 'package:animelagoom/models/manga_model.dart';
 import 'manga_card.dart';
 
 class MangaSection extends StatefulWidget {
@@ -19,7 +19,7 @@ class MangaSection extends StatefulWidget {
 }
 
 class _MangaSectionState extends State<MangaSection> {
-  final List<Manga> _mangaList = [];
+  final List<MediaItem> _mangaList = [];
   final ScrollController _scrollController = ScrollController();
 
   late final MangaService _service;
@@ -48,7 +48,7 @@ class _MangaSectionState extends State<MangaSection> {
 
     setState(() => _isLoading = true);
 
-    List<Manga> newItems = [];
+    List<MediaItem> newItems = [];
 
     switch (widget.category) {
       case 'trending':
@@ -66,7 +66,7 @@ class _MangaSectionState extends State<MangaSection> {
       default:
         newItems = [];
     }
-
+if (!mounted) return;
     setState(() {
       _mangaList.addAll(newItems);
       _offset += _limit;
