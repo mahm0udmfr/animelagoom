@@ -1,7 +1,6 @@
 # animelagoom
 
-A new Flutter project.
-
+This Project is an anime library witch will manage anime and manga and help user to have his own library of anime and manga to keep in touch with it.
 ## Getting Started
 
 This project is a starting point for a Flutter application.

@@ -1,23 +1,22 @@
-import 'package:animelagoom/ui/AnimeDetailsScreen/anime_details_screen.dart';
+import 'package:animelagoom/models/anime_and_manga_model.dart';
 import 'package:flutter/material.dart';
-import '../../../models/anime_and_manga_model.dart';
 
-class AnimeCard extends StatelessWidget {
-  final MediaItem anime;
+class MangaCard extends StatelessWidget {
+  final MediaItem manga;
 
-  const AnimeCard({super.key, required this.anime});
+  const MangaCard({super.key, required this.manga});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => AnimeDetailsScreen(anime: anime,),
-      ),
-    );
-  },
+      onTap: () {
+            // Navigator.push(
+      // context,
+      // MaterialPageRoute(
+        // builder: (_) => AnimeDetailsScreen2(anime:    ,),
+      // ),
+    // );
+      },
       child: SizedBox(
         width: 120,
         child: Column(
@@ -26,21 +25,23 @@ class AnimeCard extends StatelessWidget {
             AspectRatio(
               aspectRatio: 3 / 4,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                  anime.attributes.coverImage?.original ?? anime.attributes.posterImage?.original ?? '',
+                  manga.attributes.coverImage?.original ??
+                      manga.attributes.posterImage?.original ??
+                      '',
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image)),
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return const Center(child: CircularProgressIndicator(strokeWidth: 2));
                   },
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, ___, __) => Container(color: Colors.grey),
                 ),
               ),
             ),
             const SizedBox(height: 4),
             Text(
-              anime.attributes.canonicalTitle,
+              manga.attributes.canonicalTitle,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodySmall,

@@ -1,4 +1,3 @@
-import 'package:animelagoom/ui/AnimeDetailsScreen/anime_details_screen.dart';
 import 'package:animelagoom/ui/HomeScreen/home_screen.dart';
 import 'package:animelagoom/utils/app_theme.dart';
 import 'package:animelagoom/utils/sheardprefrences.dart';
@@ -18,15 +17,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.whiteTheme,
-      initialRoute:
-      //AnimeDetailsScreen.animeDetailsRoute,
-      HomeScreen.homeRoute,
+      initialRoute:HomeScreen.homeRoute,
+      //HomeScreen.homeRoute,
       routes: {
         HomeScreen.homeRoute: (context) => const HomeScreen(),
-        AnimeDetailsScreen.animeDetailsRoute: (context) {
-          final animeId = ModalRoute.of(context)!.settings.arguments as String;
-          return AnimeDetailsScreen(animeId: animeId);
-        },
       },
     );
   }

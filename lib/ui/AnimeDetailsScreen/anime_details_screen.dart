@@ -6,26 +6,16 @@ import 'package:animelagoom/utils/app_colors.dart';
 import 'package:animelagoom/utils/app_styles.dart';
 import 'package:animelagoom/utils/assets_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../Core/api/api_manager.dart';
-import '../../models/AnimeDetails.dart';
-import '../HomeScreen/Cubit/anime details/anime states.dart';
-import '../HomeScreen/Cubit/anime details/anime view model.dart';
 
 class AnimeDetailsScreen extends StatefulWidget {
-  final String animeId;
-  const AnimeDetailsScreen({required this.animeId, Key? key}) : super(key: key);
       static String animeDetailsRoute = "animeDetailsRoute";
+  const AnimeDetailsScreen({super.key});
 
   @override
   State<AnimeDetailsScreen> createState() => _AnimeDetailsScreenState();
 }
 
 class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
-  final KitsuApiManager apiManager = KitsuApiManager();
-  AnimeDetails? anime;
-  bool loading = true;
 
   String selectedTab = "Summary";
 
@@ -36,158 +26,122 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    apiManager.fetchAnimeDetails(widget.animeId).then((value) {
-      setState(() {
-        anime = value;
-        loading = false;
-      });
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => AnimeCubit(KitsuApiManager())..fetchAnime(widget.animeId),
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child:Column(
-            children: [
-    BlocBuilder<AnimeCubit, AnimeState>(
-    builder: (context, state) {
-    if (state is AnimeLoading) {
-    return const Center(child: CircularProgressIndicator());
-    } else if (state is AnimeError) {
-    return Center(child: Text(state.message));
-    } else if (state is AnimeLoaded) {
-          final anime = state.anime;
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
 
+          children: [
+            Stack(
+              children: [
+                Image.asset(
+                  AssetsManager.test,
+                  width: double.infinity,
+                  height: 400,
+                  fit: BoxFit.cover,
+                ),
+                Container(
+                  width: double.infinity,
+                  height: 250,
+                  color: AppColors.transparent,
+                  padding: const EdgeInsets.all(16),
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Text(
+                      'comments',
+                      style:AppStyles.regular14WhiteRoboto,
+                    ),
+                  ),
+                )
+              ],
+            ),
 
-          return Column(
-          children: [
-          Stack(
-          children: [
-          Image.network(
-            anime.data?.attributes?.coverImage?.original ?? '',
-          width: double.infinity,
-          height: 400,
-          fit: BoxFit.cover,
-          ),
-          Container(
-          width: double.infinity,
-          height: 250,
-          color: AppColors.transparent,
-          padding: const EdgeInsets.all(16),
-          child: Align(
-          alignment: Alignment.bottomLeft,
-          child: Text(
-          'comments',
-          style:AppStyles.regular14WhiteRoboto,
-          ),
-          ),
-          )
+            Container(
+              color: Colors.white,
+              height: 50,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    buildTab("Summary"),
+                    buildSeparator(),
+                    buildTab("Episodes"),
+                    buildSeparator(),
+                    buildTab("Characters"),
+                    buildSeparator(),
+                    buildTab("Reactions"),
+                    buildSeparator(),
+                    buildTab("Franchise"),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+              Stack(
+              children: [
+              ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                AssetsManager.test,
+                width: 200,
+                height: 300,
+                fit: BoxFit.cover,
+              ),
+            ),
+              Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(4)
+                  ),
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.favorite_border),
+                  color: AppColors.greyColor,
+                  onPressed: () {},
+                ),
+              ),
+              ]
+              ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            buildActionButton("Completed", Colors.teal, ),
+                            const SizedBox(height: 8),
+                            buildActionButton("Want to Watch", Colors.blue),
+                            const SizedBox(height: 8),
+                            buildActionButton("Started Watching", Colors.purple),
+                            SizedBox(height: 40,),
+                            Text('Watch Online ',style: AppStyles.regular16greyRoboto,),
+                            SizedBox(height: 10,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                buildServiceBox(AssetsManager.netflix),
+                                const SizedBox(width: 8),
+                                buildServiceBox(AssetsManager.hulu),
+                                const SizedBox(width: 8),
+                                buildServiceBox(AssetsManager.crunchyroll),
+                              ],
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            buildTabContent(),
           ],
-          ),
-
-          Container(
-          color: Colors.white,
-          height: 50,
-          child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-          children: [
-          buildTab("Summary"),
-          buildSeparator(),
-          buildTab("Episodes"),
-          buildSeparator(),
-          buildTab("Characters"),
-          buildSeparator(),
-          buildTab("Reactions"),
-          buildSeparator(),
-          buildTab("Franchise"),
-          ],
-          ),
-          ),
-          ),
-          Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-          children: [
-          Row(
-          children: [
-          Stack(
-          children: [
-          ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Image.network(
-            anime.data?.attributes?.coverImage?.original ?? '',
-          width: 200,
-          height: 300,
-          fit: BoxFit.cover,
-          ),
-          ),
-          Container(
-          height: 40,
-          width: 40,
-          decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-          bottomRight: Radius.circular(4)
-          ),
-          ),
-          child: IconButton(
-          icon: const Icon(Icons.favorite_border),
-          color: AppColors.greyColor,
-          onPressed: () {},
-          ),
-          ),
-          ]
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-          child: Column(
-          children: [
-          buildActionButton("Completed", Colors.teal, ),
-          const SizedBox(height: 8),
-          buildActionButton("Want to Watch", Colors.blue),
-          const SizedBox(height: 8),
-          buildActionButton("Started Watching", Colors.purple),
-          SizedBox(height: 40,),
-          Text('Watch Online ',style: AppStyles.regular16greyRoboto,),
-          SizedBox(height: 10,),
-          Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-          buildServiceBox(AssetsManager.netflix),
-          const SizedBox(width: 8),
-          buildServiceBox(AssetsManager.hulu),
-          const SizedBox(width: 8),
-          buildServiceBox(AssetsManager.crunchyroll),
-          ],
-          )
-          ],
-          ),
-          )
-          ],
-          ),
-          ],
-          ),
-          ),
-          buildTabContent(),
-          ],
-          );
-          }
-          return Container();
-          },
-    ),
-
-    ],
-          )
-
-
-
-
         ),
       ),
     );
