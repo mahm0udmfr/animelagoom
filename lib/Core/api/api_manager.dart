@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:animelagoom/core/api/api_constatnts.dart';
 import 'package:http/http.dart' as http;
 
-import '../../models/AnimeDetails.dart';
+import '../../models/anime_and_manga_model.dart';
+
 
 class KitsuApiManager {
   final String? accessToken;
@@ -79,15 +80,19 @@ class KitsuApiManager {
   }
 
 
+  Future<List<Genre>> fetchGenresForAnime(String animeId) async {
+    final response = await http.get(
+      Uri.parse('https://kitsu.io/api/edge/anime/$animeId/genres'),
+    );
 
-  Future<AnimeDetails?> fetchAnimeDetails(String id) async {
-    try {
-      final jsonData = await get('/anime/$id');
-      return AnimeDetails.fromJson(jsonData);
-    } catch (e) {
-      print('Failed to fetch anime details: $e');
-      return null;
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final List genreList = data['data'];
+      return genreList.map((e) => Genre.fromJson(e)).toList();
+    } else {
+      throw Exception('Failed to load genres');
     }
   }
+
 
 }
