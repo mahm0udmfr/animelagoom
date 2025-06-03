@@ -1,9 +1,9 @@
-import 'package:animelagoom/ui/DetailsScreen/anime_details_screen2.dart';
+import 'package:animelagoom/ui/AnimeDetailsScreen/anime_details_screen.dart';
 import 'package:flutter/material.dart';
-import '../../../models/anime_model.dart';
+import '../../../models/anime_and_manga_model.dart';
 
 class AnimeCard extends StatelessWidget {
-  final Anime anime;
+  final MediaItem anime;
 
   const AnimeCard({super.key, required this.anime});
 
@@ -14,7 +14,7 @@ class AnimeCard extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => AnimeDetailsScreen2(anime: anime,),
+        builder: (_) => AnimeDetailsScreen(anime: anime,),
       ),
     );
   },
@@ -28,7 +28,11 @@ class AnimeCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  anime.imageUrl ?? '',
+                  anime.attributes.coverImage?.original ?? anime.attributes.posterImage?.original ?? '',
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+                  },
                   fit: BoxFit.cover,
                   errorBuilder: (_, ___, __) => Container(color: Colors.grey),
                 ),
@@ -36,7 +40,7 @@ class AnimeCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              anime.title,
+              anime.attributes.canonicalTitle,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodySmall,

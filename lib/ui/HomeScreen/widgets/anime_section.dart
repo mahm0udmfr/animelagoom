@@ -1,6 +1,6 @@
 import 'package:animelagoom/core/api/api_manager.dart';
 import 'package:animelagoom/Services/anime_service.dart';
-import 'package:animelagoom/models/anime_model.dart';
+import 'package:animelagoom/models/anime_and_manga_model.dart';
 import 'package:animelagoom/ui/HomeScreen/widgets/anime_card.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +19,7 @@ class AnimeSection extends StatefulWidget {
 }
 
 class _AnimeSectionState extends State<AnimeSection> {
-  final List<Anime> _animes = [];
+  final List<MediaItem> _animes = [];
   final ScrollController _scrollController = ScrollController();
 
   final int _limit = 10;
@@ -53,7 +53,7 @@ class _AnimeSectionState extends State<AnimeSection> {
       _isLoading = true;
     });
 
-    final List<Anime> newAnimes = switch (widget.category) {
+    final List<MediaItem> newAnimes = switch (widget.category) {
       'trending' => await _animeService.fetchTrendingAnime(offset: _offset, limit: _limit),
       'upcoming' => await _animeService.fetchUpcomingAnime(offset: _offset, limit: _limit),
       'highestRated' => await _animeService.fetchHighestRatedAnime(offset: _offset, limit: _limit),

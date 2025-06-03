@@ -1,4 +1,3 @@
-import 'package:animelagoom/ui/AnimeDetailsScreen/anime_details_screen.dart';
 import 'package:animelagoom/ui/HomeScreen/home_screen.dart';
 import 'package:animelagoom/utils/app_theme.dart';
 import 'package:animelagoom/utils/sheardprefrences.dart';
@@ -22,8 +21,6 @@ class MyApp extends StatelessWidget {
       //HomeScreen.homeRoute,
       routes: {
         HomeScreen.homeRoute: (context) => const HomeScreen(),
-        AnimeDetailsScreen.animeDetailsRoute:
-            (context) => const AnimeDetailsScreen(),
       },
     );
   }

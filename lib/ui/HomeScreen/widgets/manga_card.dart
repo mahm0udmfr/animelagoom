@@ -1,10 +1,8 @@
-import 'package:animelagoom/models/anime_model.dart';
-import 'package:animelagoom/ui/DetailsScreen/anime_details_screen2.dart';
+import 'package:animelagoom/models/anime_and_manga_model.dart';
 import 'package:flutter/material.dart';
-import '../../../models/manga_model.dart';
 
 class MangaCard extends StatelessWidget {
-  final Manga manga;
+  final MediaItem manga;
 
   const MangaCard({super.key, required this.manga});
 
@@ -29,7 +27,9 @@ class MangaCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                  manga.imageUrl,
+                  manga.attributes.coverImage?.original ??
+                      manga.attributes.posterImage?.original ??
+                      '',
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image)),
                   loadingBuilder: (context, child, loadingProgress) {
@@ -41,7 +41,7 @@ class MangaCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              manga.title,
+              manga.attributes.canonicalTitle,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodySmall,

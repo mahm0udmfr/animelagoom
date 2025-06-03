@@ -1,7 +1,6 @@
 import 'package:animelagoom/Services/anime_service.dart';
 import 'package:animelagoom/Services/manga_service.dart';
-import 'package:animelagoom/models/anime_model.dart';
-import 'package:animelagoom/models/manga_model.dart';
+import 'package:animelagoom/models/anime_and_manga_model.dart';
 import 'package:animelagoom/core/api/api_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +22,7 @@ class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   final KitsuApiManager _apiManager = KitsuApiManager();
 
-  List<dynamic> _results = [];
+  List<MediaItem> _results = [];
   bool _isLoading = false;
 
   @override
@@ -58,9 +57,7 @@ class _SearchScreenState extends State<SearchScreen> {
     final isAnime = widget.contentType == 'anime';
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Search ${isAnime ? "Anime" : "Manga"}')
-      ),
+      appBar: AppBar(title: Text('Search ${isAnime ? "Anime" : "Manga"}')),
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -91,17 +88,24 @@ class _SearchScreenState extends State<SearchScreen> {
                           itemBuilder: (context, index) {
                             final item = _results[index];
                             return ListTile(
-                              title: Text(isAnime ? item.title : item.title),
-                              leading: CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  isAnime ? item.imageUrl : item.imageUrl,
+                                title: Text(isAnime
+                                    ? item.attributes.canonicalTitle
+                                    : item.attributes.canonicalTitle),
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(item
+                                          .attributes.coverImage?.original ??
+                                      item.attributes.posterImage?.original ??
+                                      'https://via.placeholder.com/150'),
+                                  onBackgroundImageError: (_, __) =>
+                                      const Icon(Icons.broken_image),
                                 ),
-                                onBackgroundImageError: (_, __) => const Icon(Icons.broken_image),
-                              ),
-                              subtitle: Text(isAnime
-                                  ? (item as Anime).title 
-                                  : (item as Manga).title ),
-                            );
+                                subtitle: Text(isAnime
+                                    ? (item).attributes.titles.en ??
+                                        item.attributes.titles.enJp ??
+                                        "unknown"
+                                    : (item).attributes.titles.en ??
+                                        item.attributes.titles.enJp ??
+                                        "unknown"));
                           },
                         ),
             ),
