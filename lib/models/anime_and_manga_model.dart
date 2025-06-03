@@ -5,12 +5,14 @@ class MediaItem {
   String type; // 'anime' or 'manga'
   MediaLinks links;
   MediaAttributes attributes;
+  final MediaRelationships? relationships;
 
   MediaItem({
     required this.id,
     required this.type,
     required this.links,
     required this.attributes,
+    this.relationships,
   });
 
   // Factory constructor to create a MediaItem from JSON
@@ -24,6 +26,9 @@ class MediaItem {
       links: MediaLinks.fromJson(json['links'] as Map<String, dynamic>? ?? {}),
       // Pass the 'type' to MediaAttributes.fromJson to handle type-specific fields
       attributes: MediaAttributes.fromJson(json['attributes'] as Map<String, dynamic>, json['type'] as String),
+      relationships: json['relationships'] != null
+          ? MediaRelationships.fromJson(json['relationships'])
+          : null,
     );
   }
 
@@ -275,4 +280,45 @@ class MediaAttributes {
     return data;
   }
 }
+
+class MediaRelationships {
+  final RelationshipData? genres;
+
+  MediaRelationships({this.genres});
+
+  factory MediaRelationships.fromJson(Map<String, dynamic> json) {
+    return MediaRelationships(
+      genres: json['genres'] != null
+          ? RelationshipData.fromJson(json['genres'])
+          : null,
+    );
+  }
+}
+
+class RelationshipData {
+  final List<Map<String, dynamic>> data;
+
+  RelationshipData({required this.data});
+
+  factory RelationshipData.fromJson(Map<String, dynamic> json) {
+    return RelationshipData(
+      data: List<Map<String, dynamic>>.from(json['data'] ?? []),
+    );
+  }
+}
+
+class Genre {
+  final String id;
+  final String name;
+
+  Genre({required this.id, required this.name});
+
+  factory Genre.fromJson(Map<String, dynamic> json) {
+    return Genre(
+      id: json['id'],
+      name: json['attributes']['name'] ?? '',
+    );
+  }
+}
+
 
