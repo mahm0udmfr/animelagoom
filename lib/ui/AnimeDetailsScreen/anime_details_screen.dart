@@ -237,27 +237,62 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
   }
 
 
-
+  //
+  // Widget buildTabContent() {
+  //   switch (selectedTab) {
+  //     case "Summary":
+  //       return SummaryScreen(anime: widget.anime,);
+  //     case "Episodes":
+  //       return EpisodeScreen();
+  //     case "Characters":
+  //       return CharacterScreen();
+  //     case "Reactions":
+  //       return ReactionScreen();
+  //     case "Franchise":
+  //       return Container(
+  //         color: Colors.orange,
+  //         height: 500,
+  //       );
+  //     default:
+  //       return Container(
+  //         color: Colors.blue,
+  //       );
+  //   }
+  // }
   Widget buildTabContent() {
-    switch (selectedTab) {
-      case "Summary":
-        return SummaryScreen(anime: widget.anime,);
-      case "Episodes":
-        return EpisodeScreen();
-      case "Characters":
-        return CharacterScreen();
-      case "Reactions":
-        return ReactionScreen();
-      case "Franchise":
-        return Container(
-          color: Colors.orange,
-          height: 500,
-        );
-      default:
-        return Container(
-          color: Colors.blue,
-        );
-    }
+    return BlocBuilder<AnimeDetailsBloc, AnimeDetailsState>(
+      builder: (context, state) {
+        if (state is AnimeDetailsLoaded) {
+          switch (selectedTab) {
+            case "Summary":
+              return SummaryScreen();  // No anime param needed here
+            case "Episodes":
+              return EpisodeScreen();
+            case "Characters":
+              return CharacterScreen(animeId: widget.anime.id,);
+            case "Reactions":
+              return ReactionScreen();
+            case "Franchise":
+              return Container(
+                color: Colors.orange,
+                height: 500,
+              );
+            default:
+              return Container(
+                color: Colors.blue,
+              );
+          }
+        } else if (state is AnimeDetailsLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is AnimeDetailsError) {
+          return Center(child: Text("Error loading anime: ${state.message}"));
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
+    );
   }
+
+
 
 }

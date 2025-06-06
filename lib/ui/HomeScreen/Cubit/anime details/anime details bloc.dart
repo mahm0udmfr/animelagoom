@@ -16,11 +16,15 @@ class AnimeDetailsBloc extends Bloc<AnimeDetailsEvent, AnimeDetailsState> {
         final mediaJson = json['data'] as Map<String, dynamic>;
         final anime = MediaItem.fromJson(mediaJson);
         final genres = await apiManager.fetchGenresForAnime(event.animeId);
+        final characters = await apiManager.fetchCharactersForAnime(event.animeId);
+        final episodes = await apiManager.fetchEpisodes(event.animeId);
 
-        emit(AnimeDetailsLoaded(anime,genres));
+        emit(AnimeDetailsLoaded(anime,genres,characters,episodes));
       } catch (e) {
         emit(AnimeDetailsError(e.toString()));
       }
     });
   }
+
+
 }

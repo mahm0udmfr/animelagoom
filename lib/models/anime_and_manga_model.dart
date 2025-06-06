@@ -6,6 +6,7 @@ class MediaItem {
   MediaLinks links;
   MediaAttributes attributes;
   final MediaRelationships? relationships;
+  final List<Genre> genres;
 
   MediaItem({
     required this.id,
@@ -13,6 +14,7 @@ class MediaItem {
     required this.links,
     required this.attributes,
     this.relationships,
+    this.genres = const [],
   });
 
   // Factory constructor to create a MediaItem from JSON
@@ -29,6 +31,9 @@ class MediaItem {
       relationships: json['relationships'] != null
           ? MediaRelationships.fromJson(json['relationships'])
           : null,
+      genres: json['genres'] != null
+          ? (json['genres']['data'] as List).map((g) => Genre.fromJson(g)).toList()
+          : [],
     );
   }
 
@@ -320,5 +325,70 @@ class Genre {
     );
   }
 }
+
+class Character {
+  final String? name;
+  final CharacterImage? image;
+  final List<String> japaneseVoiceActors;
+
+  Character({this.name, this.image, this.japaneseVoiceActors = const []});
+
+  factory Character.fromJson(Map<String, dynamic> json, {List<String> voiceActors = const []}) {
+    final attributes = json['attributes'] as Map<String, dynamic>? ?? {};
+    return Character(
+      name: attributes['name'] as String?,
+      image: attributes['image'] != null
+          ? CharacterImage.fromJson(attributes['image'] as Map<String, dynamic>)
+          : null,
+      japaneseVoiceActors: voiceActors,
+    );
+  }
+
+  String? get imageUrl => image?.original;
+
+  String get voiceActorsAsString => japaneseVoiceActors.isNotEmpty
+      ? japaneseVoiceActors.join(', ')
+      : 'Unknown';
+}
+
+
+class CharacterImage {
+  final String? original;
+
+  CharacterImage({this.original});
+
+  factory CharacterImage.fromJson(Map<String, dynamic> json) {
+    return CharacterImage(
+      original: json['original'] as String?,
+    );
+  }
+}
+
+class Episode {
+  final int? number;
+  final String? canonicalTitle;
+  final String? thumbnail;
+
+  Episode({
+    this.number,
+    this.canonicalTitle,
+    this.thumbnail,
+  });
+
+  factory Episode.fromJson(Map<String, dynamic> json) {
+    final attributes = json['attributes'] ?? {};
+    final thumbnailMap = attributes['thumbnail'] as Map<String, dynamic>?;
+
+    return Episode(
+      number: attributes['number'] as int?,
+      canonicalTitle: attributes['canonicalTitle'] as String?,
+      thumbnail: thumbnailMap?['original'] as String?, // Safely extract original URL
+    );
+  }
+}
+
+
+
+
 
 

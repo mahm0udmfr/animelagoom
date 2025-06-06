@@ -26,12 +26,12 @@ class EpisodeCard extends StatelessWidget {
           Image.network(
             imageUrl,
             width: double.infinity,
-            height: 120,
+            height: 200,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
               return const SizedBox(
                 width: double.infinity,
-                height: 120,
+                height: 150,
                 child: Center(
                   child: Icon(Icons.image_not_supported_outlined),
                 ),
