@@ -95,4 +95,102 @@ class KitsuApiManager {
   }
 
 
+  Future<List<Episode>> fetchEpisodes(String animeId) async {
+    List<Episode> allEpisodes = [];
+    int pageOffset = 0;
+    const int pageLimit = 20;
+
+    while (true) {
+      final response = await get(
+        '/anime/$animeId/episodes',
+        queryParams: {
+          'page[limit]': '$pageLimit',
+          'page[offset]': '$pageOffset',
+        },
+      );
+
+      final List<dynamic> episodeListJson = response['data'] ?? [];
+
+      if (episodeListJson.isEmpty) {
+        break; // No more episodes
+      }
+
+      allEpisodes.addAll(
+        episodeListJson.map((json) => Episode.fromJson(json)).toList(),
+      );
+
+      // If fewer episodes were returned than the limit, we're done
+      if (episodeListJson.length < pageLimit) {
+        break;
+      }
+
+      // Move to next page
+      pageOffset += pageLimit;
+    }
+
+    return allEpisodes;
+  }
+
+
+  Future<List<Character>> fetchCharactersForAnime(String animeId) async {
+    final response = await get('/anime/$animeId/characters', queryParams: {
+      'include': 'character.castings.person',
+    });
+
+    final List<dynamic> characterData = response['data'] ?? [];
+    final List<dynamic> included = response['included'] ?? [];
+
+    final List<Character> characters = [];
+
+    for (final characterRelation in characterData) {
+      final characterId = characterRelation['relationships']['character']['data']['id'];
+
+      // Get full character data
+      final includedCharacter = included.firstWhere(
+            (item) => item['id'] == characterId && item['type'] == 'characters',
+        orElse: () => null,
+      );
+
+      if (includedCharacter == null) continue;
+
+      // Find castings related to this character
+      final castings = included.where((item) =>
+      item['type'] == 'castings' &&
+          item['relationships']['character']['data']?['id'] == characterId
+      );
+
+      final List<String> voiceActorNames = [];
+
+      for (final casting in castings) {
+        final personRef = casting['relationships']['person']?['data'];
+        if (personRef != null) {
+          final personId = personRef['id'];
+
+          final person = included.firstWhere(
+                (item) => item['id'] == personId && item['type'] == 'people',
+            orElse: () => null,
+          );
+
+          if (person != null) {
+            final name = person['attributes']?['name'];
+            if (name != null) {
+              voiceActorNames.add(name);
+            }
+          }
+        }
+      }
+
+      characters.add(Character.fromJson(includedCharacter, voiceActors: voiceActorNames));
+    }
+
+    return characters;
+  }
+
+
+
+
+
+
+
+
 }

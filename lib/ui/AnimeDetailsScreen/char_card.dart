@@ -6,7 +6,7 @@ import 'char_screen.dart';
 class CharacterCard extends StatelessWidget {
   const CharacterCard({super.key, required this.character});
 
-  final Character character;
+  final CharacterClass character;
 
   @override
   Widget build(BuildContext context) {
