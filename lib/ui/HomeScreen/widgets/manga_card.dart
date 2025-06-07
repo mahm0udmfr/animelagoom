@@ -1,4 +1,5 @@
 import 'package:animelagoom/models/anime_and_manga_model.dart';
+import 'package:animelagoom/ui/AnimeDetailsScreen/anime_details_screen.dart';
 import 'package:flutter/material.dart';
 
 class MangaCard extends StatelessWidget {
@@ -10,12 +11,14 @@ class MangaCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-            // Navigator.push(
-      // context,
-      // MaterialPageRoute(
-        // builder: (_) => AnimeDetailsScreen2(anime:    ,),
-      // ),
-    // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => AnimeDetailsScreen(
+              anime: manga,
+            ),
+          ),
+        );
       },
       child: SizedBox(
         width: 120,
@@ -31,10 +34,12 @@ class MangaCard extends StatelessWidget {
                       manga.attributes.posterImage?.original ??
                       '',
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image)),
+                  errorBuilder: (_, __, ___) =>
+                      const Center(child: Icon(Icons.broken_image)),
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
-                    return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+                    return const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2));
                   },
                 ),
               ),

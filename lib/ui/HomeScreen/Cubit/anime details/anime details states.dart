@@ -1,4 +1,3 @@
-// anime_details_event.dart
 import '../../../../models/anime_and_manga_model.dart';
 
 abstract class AnimeDetailsEvent {}

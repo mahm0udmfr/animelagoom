@@ -3,12 +3,9 @@ import 'package:animelagoom/utils/app_colors.dart';
 import 'package:animelagoom/utils/app_styles.dart';
 import 'package:animelagoom/utils/assets_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/anime_and_manga_model.dart';
-import '../HomeScreen/Cubit/anime details/anime details bloc.dart';
-import '../HomeScreen/Cubit/anime details/anime details states.dart';
 
 class SummaryScreen extends StatefulWidget{
   final MediaItem anime;
@@ -19,7 +16,7 @@ class SummaryScreen extends StatefulWidget{
   //   'Shounen', 'Super Power', 'Violence'
   // ];
 
-   SummaryScreen({super.key,required this.anime});
+   const SummaryScreen({super.key,required this.anime});
 
   @override
   State<SummaryScreen> createState() => _SummaryScreenState();
@@ -32,9 +29,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
     final maxLines = isExpanded ? null : 3;
 
     final attributes = widget.anime.attributes;
-    final title = attributes.titles?.en ??
-        attributes.titles?.enJp ??
-        attributes.titles?.jaJp ??
+    final title = attributes.titles.en ??
+        attributes.titles.enJp ??
+        attributes.titles.jaJp ??
         "No title";
 
     final startDate = attributes.startDate ?? "";
