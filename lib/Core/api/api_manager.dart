@@ -93,6 +93,19 @@ class KitsuApiManager {
       throw Exception('Failed to load genres');
     }
   }
+Future<List<Genre>> fetchGenresForManga(String mangaId) async {
+  final response = await http.get(
+    Uri.parse('https://kitsu.io/api/edge/manga/$mangaId/genres'),
+  );
+
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body);
+    final List<dynamic> genreList = data['data'];
+    return genreList.map((e) => Genre.fromJson(e)).toList();
+  } else {
+    throw Exception('Failed to load genres');
+  }
+}
 
 
   Future<List<Episode>> fetchEpisodes(String animeId) async {
@@ -186,7 +199,33 @@ class KitsuApiManager {
     return characters;
   }
 
+Future<List<Character>> fetchCharactersForManga(String mangaId) async {
+  final response = await http.get(
+    Uri.parse('https://kitsu.io/api/edge/manga/$mangaId/characters'),
+  );
 
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body);
+    final List<dynamic> characterList = data['data'];
+    return characterList.map((e) => Character.fromJson(e)).toList();
+  } else {
+    throw Exception('Failed to load characters');
+  }
+}
+
+Future<List<Chapter>> fetchChapters(String mangaId) async {
+  final response = await http.get(
+    Uri.parse('https://kitsu.io/api/edge/manga/$mangaId/chapters'),
+  );
+
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body);
+    final List<dynamic> chapterList = data['data'];
+    return chapterList.map((e) => Chapter.fromJson(e)).toList();
+  } else {
+    throw Exception('Failed to load chapters');
+  }
+}
 
 
 
