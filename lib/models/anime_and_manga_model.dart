@@ -7,6 +7,7 @@ class MediaItem {
   MediaAttributes attributes;
   final MediaRelationships? relationships;
   final List<Genre> genres;
+  final List<Chapter> chapters;
 
   MediaItem({
     required this.id,
@@ -15,6 +16,7 @@ class MediaItem {
     required this.attributes,
     this.relationships,
     this.genres = const [],
+    this.chapters = const [],
   });
 
   // Factory constructor to create a MediaItem from JSON
@@ -34,6 +36,9 @@ class MediaItem {
       genres: json['genres'] != null
           ? (json['genres']['data'] as List).map((g) => Genre.fromJson(g)).toList()
           : [],
+          chapters: json['chapters'] != null
+          ? (json['chapters'] as List).map((c) => Chapter.fromJson(c)).toList()
+          : [],
     );
   }
 
@@ -43,6 +48,7 @@ class MediaItem {
         'type': type,
         'links': links.toJson(),
         'attributes': attributes.toJson(type), // Pass type for conditional serialization
+        'chapters': chapters.map((c) => c.toJson()).toList(),
       };
 }
 
@@ -84,6 +90,47 @@ class Titles {
         'en_jp': enJp,
         'ja_jp': jaJp,
         'en_us': enUs,
+      };
+}
+class Chapter {
+  final String id;
+  final String title;
+  final int? number;  // Chapter number, nullable if unknown
+  final String? synopsis;
+  final DateTime? publishedAt;
+
+  Chapter({
+    required this.id,
+    required this.title,
+    this.number,
+    this.synopsis,
+    this.publishedAt,
+  });
+
+  factory Chapter.fromJson(Map<String, dynamic> json) {
+    final attributes = json['attributes'] as Map<String, dynamic>? ?? {};
+
+    return Chapter(
+      id: json['id'] as String,
+      title: attributes['title'] as String? ?? 'Untitled',
+      number: attributes['number'] is int
+          ? attributes['number'] as int
+          : (attributes['number'] is String ? int.tryParse(attributes['number']) : null),
+      synopsis: attributes['synopsis'] as String?,
+      publishedAt: attributes['publishedAt'] != null
+          ? DateTime.tryParse(attributes['publishedAt'])
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'attributes': {
+          'title': title,
+          'number': number,
+          'synopsis': synopsis,
+          'publishedAt': publishedAt?.toIso8601String(),
+        },
       };
 }
 

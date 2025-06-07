@@ -1,9 +1,6 @@
 import 'package:animelagoom/utils/app_styles.dart';
-import 'package:animelagoom/utils/assets_manager.dart';
 import 'package:flutter/material.dart';
-
 import '../../Core/api/api_manager.dart';
-import '../../models/anime_and_manga_model.dart';
 import 'char_card.dart';
 
 class CharacterScreen extends StatefulWidget {
@@ -23,19 +20,19 @@ class _CharacterScreenState extends State<CharacterScreen> {
     char = fetchCharactersAsCharacterClass(widget.animeId);
   }
 
-  Future<List<CharacterClass>> fetchCharactersAsCharacterClass(String animeId) async {
-    final apiCharacters = await KitsuApiManager().fetchCharactersForAnime(animeId);
+  Future<List<CharacterClass>> fetchCharactersAsCharacterClass(
+      String animeId) async {
+    final apiCharacters =
+        await KitsuApiManager().fetchCharactersForAnime(animeId);
 
     return apiCharacters.map((c) {
       return CharacterClass(
         name: c.name ?? 'Unknown',
-        japaneseVoiceActor: c.voiceActorsAsString ?? 'Unknown',
+        japaneseVoiceActor: c.voiceActorsAsString ,
         imageUrl: c.imageUrl ?? '',
       );
     }).toList();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -88,5 +85,3 @@ class CharacterClass {
     required this.imageUrl,
   });
 }
-
-

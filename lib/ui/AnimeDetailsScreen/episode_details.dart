@@ -69,7 +69,7 @@ class _EpisodeDetailsCardState extends State<EpisodeDetailsCard> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${widget.duration}',
+                    widget.duration,
                     style: AppStyles.regular16greyRoboto,
                   ),
                   Text(

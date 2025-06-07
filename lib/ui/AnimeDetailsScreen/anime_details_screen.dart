@@ -1,5 +1,3 @@
-
-
 import 'package:animelagoom/ui/AnimeDetailsScreen/summary_screen.dart';
 import 'package:animelagoom/utils/app_colors.dart';
 import 'package:animelagoom/utils/app_styles.dart';
@@ -8,24 +6,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Core/api/api_manager.dart';
 import '../../models/anime_and_manga_model.dart';
-import '../HomeScreen/Cubit/anime details/anime details bloc.dart';
-import '../HomeScreen/Cubit/anime details/anime details states.dart';
+import '../HomeScreen/Cubit/anime details/anime_details_bloc.dart';
+import '../HomeScreen/Cubit/anime details/anime_details_states.dart';
 import 'char_screen.dart';
 import 'episode_screen.dart';
 import 'reaction_screen.dart';
 
 class AnimeDetailsScreen extends StatefulWidget {
-      static String animeDetailsRoute = "animeDetailsRoute";
-     // final String animeId;
-      final MediaItem anime;
-  const AnimeDetailsScreen({super.key,required this.anime});
+  static String animeDetailsRoute = "animeDetailsRoute";
+  // final String animeId;
+  final MediaItem anime;
+  const AnimeDetailsScreen({super.key, required this.anime});
 
   @override
   State<AnimeDetailsScreen> createState() => _AnimeDetailsScreenState();
 }
 
 class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
-
   String selectedTab = "Summary";
 
   void selectTab(String tab) {
@@ -34,132 +31,127 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AnimeDetailsBloc(KitsuApiManager())..add(FetchAnimeDetails(widget.anime.id)),
-      child: Scaffold(
-        body: BlocBuilder<AnimeDetailsBloc, AnimeDetailsState>(
-    builder: (context, state) {
-    if (state is AnimeDetailsLoading) {
-    return const Center(child: CircularProgressIndicator());
-    } else if (state is AnimeDetailsLoaded) {
-    final anime = state.anime;
-    final posterUrl = anime.attributes.posterImage?.large;
-    final coverUrl = anime.attributes.coverImage?.large;
-
-    return SingleChildScrollView(
-    child: Column(
-
-    children: [
-    Stack(
-    children: [
-    coverUrl != null
-    ? Image.network(
-    coverUrl,
-    width: double.infinity,
-    height: 400,
-    fit: BoxFit.cover,
-    )
-        : Container(
-    width: double.infinity,
-    height: 400,
-    color: Colors.grey,
-    child: const Center(child: Text('No Cover Image')),
-    ),
-    ],
-    ),
-
-    Container(
-    color: Colors.white,
-    height: 50,
-    child: SingleChildScrollView(
-    scrollDirection: Axis.horizontal,
-    child: Row(
-    children: [
-    buildTab("Summary"),
-    buildSeparator(),
-    buildTab("Episodes"),
-    buildSeparator(),
-    buildTab("Characters"),
-    buildSeparator(),
-    buildTab("Reactions"),
-    buildSeparator(),
-    buildTab("Franchise"),
-    ],
-    ),
-    ),
-    ),
-    Padding(
-    padding: const EdgeInsets.all(12),
-    child: Column(
-    children: [
-    Row(
-    children: [
-    Stack(
-    children: [
-    ClipRRect(
-    borderRadius: BorderRadius.circular(8),
-    child: posterUrl != null
-    ? Image.network(
-    posterUrl,
-    width: 200,
-    height: 300,
-    fit: BoxFit.cover,
-    )
-        : Container(
-    width: 200,
-    height: 300,
-    color: Colors.grey,
-    child: const Center(child: Text('No Poster')),
-    ),
-    ),
-    ]
-    ),
-    const SizedBox(width: 16),
-    Expanded(
-    child: Column(
-    children: [
-    buildActionButton("Completed", Colors.teal, ),
-    const SizedBox(height: 8),
-    buildActionButton("Want to Watch", Colors.blue),
-    const SizedBox(height: 8),
-    buildActionButton("Started Watching", Colors.purple),
-    SizedBox(height: 40,),
-    Text('Watch Online ',style: AppStyles.regular16greyRoboto,),
-    SizedBox(height: 10,),
-    Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-    buildServiceBox(AssetsManager.netflix),
-    const SizedBox(width: 8),
-    buildServiceBox(AssetsManager.hulu),
-    const SizedBox(width: 8),
-    buildServiceBox(AssetsManager.crunchyroll),
-    ],
-    )
-    ],
-    ),
-    )
-    ],
-    ),
-    ],
-    ),
-    ),
-    buildTabContent(),
-    ],
-    ),
-    );
-    } else if (state is AnimeDetailsError) {
-    return Center(child: Text('Error: ${state.message}'));
-    } else {
-    return const SizedBox.shrink();
-    }
-    }
-      ),
-      ),
-    );
+        create: (_) => MediaDetailsBloc(KitsuApiManager())
+          ..add(FetchMediaDetails(widget.anime.id, MediaType.anime)),
+        child: Scaffold(
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                Stack(
+                  children: [
+                    widget.anime.attributes.coverImage?.large != null
+                        ? Image.network(
+                            widget.anime.attributes.coverImage?.large ?? '',
+                            width: double.infinity,
+                            height: 400,
+                            fit: BoxFit.cover,
+                          )
+                        : Container(
+                            width: double.infinity,
+                            height: 400,
+                            color: Colors.grey,
+                            child: const Center(child: Text('No Cover Image')),
+                          ),
+                  ],
+                ),
+                Container(
+                  color: Colors.white,
+                  height: 50,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        buildTab("Summary"),
+                        buildSeparator(),
+                        buildTab("Episodes"),
+                        buildSeparator(),
+                        buildTab("Characters"),
+                        buildSeparator(),
+                        buildTab("Reactions"),
+                        buildSeparator(),
+                        buildTab("Franchise"),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Stack(children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child:
+                                  widget.anime.attributes.posterImage?.large !=
+                                          null
+                                      ? Image.network(
+                                          widget.anime.attributes.posterImage
+                                                  ?.large ??
+                                              '',
+                                          width: 200,
+                                          height: 300,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Container(
+                                          width: 200,
+                                          height: 300,
+                                          color: Colors.grey,
+                                          child: const Center(
+                                              child: Text('No Poster')),
+                                        ),
+                            ),
+                          ]),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                buildActionButton(
+                                  "Completed",
+                                  Colors.teal,
+                                ),
+                                const SizedBox(height: 8),
+                                buildActionButton("Want to Watch", Colors.blue),
+                                const SizedBox(height: 8),
+                                buildActionButton(
+                                    "Started Watching", Colors.purple),
+                                SizedBox(
+                                  height: 40,
+                                ),
+                                Text(
+                                  'Watch Online ',
+                                  style: AppStyles.regular16greyRoboto,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    buildServiceBox(AssetsManager.netflix),
+                                    const SizedBox(width: 8),
+                                    buildServiceBox(AssetsManager.hulu),
+                                    const SizedBox(width: 8),
+                                    buildServiceBox(AssetsManager.crunchyroll),
+                                  ],
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                buildTabContent(),
+              ],
+            ),
+          ),
+        ));
   }
 
   Widget buildTab(String title) {
@@ -191,12 +183,14 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
     );
   }
 
-
-  Widget buildActionButton(String text, Color color,) {
+  Widget buildActionButton(
+    String text,
+    Color color,
+  ) {
     return SizedBox(
       width: 200,
       child: ElevatedButton(
-        onPressed: (){},
+        onPressed: () {},
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           shape: RoundedRectangleBorder(
@@ -207,7 +201,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
         child: Text(
           text,
           style: const TextStyle(
-            color: AppColors.whiteColor ,
+            color: AppColors.whiteColor,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
@@ -215,7 +209,6 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
       ),
     );
   }
-
 
   Widget buildServiceBox(String imagePath) {
     return Container(
@@ -235,7 +228,6 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
       ),
     );
   }
-
 
   //
   // Widget buildTabContent() {
@@ -260,16 +252,19 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
   //   }
   // }
   Widget buildTabContent() {
-    return BlocBuilder<AnimeDetailsBloc, AnimeDetailsState>(
+    return BlocBuilder<MediaDetailsBloc, MediaDetailsState>(
       builder: (context, state) {
-        if (state is AnimeDetailsLoaded) {
+        if (state is MediaDetailsLoaded) {
           switch (selectedTab) {
             case "Summary":
-              return SummaryScreen();  // No anime param needed here
+              return SummaryScreen(anime:widget.anime ,);
             case "Episodes":
+              // For anime, extraData = episodes; for manga, extraData = chapters
               return EpisodeScreen();
             case "Characters":
-              return CharacterScreen(animeId: widget.anime.id,);
+              return CharacterScreen(
+                animeId: state.mediaItem.id,
+              );
             case "Reactions":
               return ReactionScreen();
             case "Franchise":
@@ -282,17 +277,14 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                 color: Colors.blue,
               );
           }
-        } else if (state is AnimeDetailsLoading) {
+        } else if (state is MediaDetailsLoading) {
           return const Center(child: CircularProgressIndicator());
-        } else if (state is AnimeDetailsError) {
-          return Center(child: Text("Error loading anime: ${state.message}"));
+        } else if (state is MediaDetailsError) {
+          return Center(child: Text("Error loading media: ${state.message}"));
         } else {
           return const SizedBox.shrink();
         }
       },
     );
   }
-
-
-
 }
