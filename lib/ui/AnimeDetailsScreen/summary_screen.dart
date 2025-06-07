@@ -1,15 +1,15 @@
 import 'package:animelagoom/ui/AnimeDetailsScreen/reaction_screen.dart';
 import 'package:animelagoom/utils/app_colors.dart';
 import 'package:animelagoom/utils/app_styles.dart';
-import 'package:animelagoom/utils/assets_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../HomeScreen/Cubit/anime details/anime details bloc.dart';
 import '../HomeScreen/Cubit/anime details/anime details states.dart';
 
 class SummaryScreen extends StatefulWidget{
-   SummaryScreen({super.key});
+   const SummaryScreen({super.key});
 
   @override
   State<SummaryScreen> createState() => _SummaryScreenState();
@@ -27,9 +27,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
       final maxLines = isExpanded ? null : 3;
 
-      final title = attributes.titles?.en ??
-          attributes.titles?.enJp ??
-          attributes.titles?.jaJp ??
+      final title = attributes.titles.en ??
+          attributes.titles.enJp ??
+          attributes.titles.jaJp ??
           "No title";
 
       final startDate = attributes.startDate ?? "";
@@ -159,7 +159,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
               spacing: 8,
               runSpacing: 8,
               children: genres.map((genre) {
-                final genreName = genre.name ?? "Unknown";  // assuming genre is an object with name
+                final genreName = genre.name;  // assuming genre is an object with name
                 return Chip(
                   label: Text(genreName),
                   backgroundColor: Colors.grey[200],
@@ -222,19 +222,19 @@ class _SummaryScreenState extends State<SummaryScreen> {
                       children: [
                         detailItem(
                           'English',
-                          attributes.titles?.en ?? attributes.titles?.enUs ?? attributes.titles?.enJp ?? "Unknown",
+                          attributes.titles.en ?? attributes.titles.enUs ?? attributes.titles.enJp ?? "Unknown",
                         ),
                         detailItem(
                           'English (American)',
-                          attributes.titles?.enUs ?? attributes.titles?.en ?? attributes.titles?.enJp ?? "Unknown",
+                          attributes.titles.enUs ?? attributes.titles.en ?? attributes.titles.enJp ?? "Unknown",
                         ),
-                        detailItem('Japanese', attributes.titles?.jaJp ?? "Unknown"),
+                        detailItem('Japanese', attributes.titles.jaJp ?? "Unknown"),
                         detailItem(
                           'Japanese (Romaji)',
-                          attributes.titles?.enJp ?? attributes.titles?.jaJp ?? "Unknown",
+                          attributes.titles.enJp ?? attributes.titles.jaJp ?? "Unknown",
                         ),
                         detailItem('Episodes', attributes.episodeCount?.toString() ?? "N/A"),
-                        detailItem('Status', attributes.status ?? "Unknown"),
+                        detailItem('Status', attributes.status),
                         detailItem(
                           'Aired',
                           (attributes.startDate ?? "") +
