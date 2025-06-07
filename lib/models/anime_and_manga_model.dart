@@ -368,11 +368,17 @@ class Episode {
   final int? number;
   final String? canonicalTitle;
   final String? thumbnail;
+  final String? synopsis;
+  final String? airDate;
+  final int? episodeLength;
 
   Episode({
     this.number,
     this.canonicalTitle,
     this.thumbnail,
+    this.synopsis,
+    this.airDate,
+    this.episodeLength,
   });
 
   factory Episode.fromJson(Map<String, dynamic> json) {
@@ -382,10 +388,14 @@ class Episode {
     return Episode(
       number: attributes['number'] as int?,
       canonicalTitle: attributes['canonicalTitle'] as String?,
-      thumbnail: thumbnailMap?['original'] as String?, // Safely extract original URL
+      thumbnail: thumbnailMap?['original'] as String?,
+      synopsis: attributes['synopsis'] as String?,
+      airDate: attributes['airdate'] as String?, // or 'airedOn' if that's what your API returns
+      episodeLength: attributes['episodeLength'] as int?,
     );
   }
 }
+
 
 
 

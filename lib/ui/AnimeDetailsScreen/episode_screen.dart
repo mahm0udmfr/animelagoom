@@ -7,6 +7,7 @@ import '../../models/anime_and_manga_model.dart';
 import '../HomeScreen/Cubit/anime details/anime details bloc.dart';
 import '../HomeScreen/Cubit/anime details/anime details states.dart';
 import 'episode_card.dart';
+import 'episode_details.dart';
 
 class EpisodeScreen extends StatelessWidget {
   const EpisodeScreen({super.key});
@@ -42,10 +43,38 @@ class EpisodeScreen extends StatelessWidget {
                 final episode = episodes[index];
                 return Column(
                   children: [
-                    EpisodeCard(
-                      imageUrl: episode.thumbnail ?? '',
-                      episodeNumber: episode.number ?? 0,
-                      episodeTitle: episode.canonicalTitle ?? 'Untitled',
+                    GestureDetector(
+                    onTap: ()
+                {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          Scaffold(
+                            appBar: AppBar(title: Text('Episode ${episode
+                                .number} Details')),
+                            body: EpisodeDetailsCard(
+                              imageUrl: episode.thumbnail ?? '',
+                              episodeNumber: 'Episode ${episode.number ?? 0}',
+                              title: episode.canonicalTitle ?? 'Untitled',
+                              //duration: episode.episodeLength != null ? '${episode.episodeLength} minutes' : 'No duration available',
+
+                              duration: (episode.episodeLength != null && episode.episodeLength! > 0)
+                                  ? '${(episode.episodeLength! / 60).round()} minutes'
+                                  : 'Unknown duration',
+
+                              airDate: episode.airDate ?? 'Unknown date',
+                              description: episode.synopsis ?? 'No description available.',
+                            ),
+                          ),
+                    ),
+                  );
+                },
+                      child: EpisodeCard(
+                        imageUrl: episode.thumbnail ?? '',
+                        episodeNumber: episode.number ?? 0,
+                        episodeTitle: episode.canonicalTitle ?? 'Untitled',
+                      ),
                     ),
                     const SizedBox(height: 8),
                   ],
