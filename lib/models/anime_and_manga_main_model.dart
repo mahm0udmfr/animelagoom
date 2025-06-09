@@ -1,39 +1,39 @@
-
 // Main model for a media item (anime or manga)
 class MediaItem {
   String id;
   String type; // 'anime' or 'manga'
   MediaLinks links;
   MediaAttributes attributes;
-  final MediaRelationships? relationships;
-  final List<Genre> genres;
+  Relationships? relationships; // Added relationships
 
   MediaItem({
     required this.id,
     required this.type,
     required this.links,
     required this.attributes,
-    this.relationships,
-    this.genres = const [],
+    this.relationships, // Added to constructor
   });
 
   // Factory constructor to create a MediaItem from JSON
   factory MediaItem.fromJson(Map<String, dynamic> json) {
-    if (json['id'] == null || json['type'] == null || json['attributes'] == null) {
-      throw FormatException("Required fields (id, type, attributes) are missing in MediaItem JSON");
+    if (json['id'] == null ||
+        json['type'] == null ||
+        json['attributes'] == null) {
+      throw FormatException(
+          "Required fields (id, type, attributes) are missing in MediaItem JSON");
     }
     return MediaItem(
       id: json['id'] as String,
       type: json['type'] as String,
       links: MediaLinks.fromJson(json['links'] as Map<String, dynamic>? ?? {}),
       // Pass the 'type' to MediaAttributes.fromJson to handle type-specific fields
-      attributes: MediaAttributes.fromJson(json['attributes'] as Map<String, dynamic>, json['type'] as String),
+      attributes: MediaAttributes.fromJson(
+          json['attributes'] as Map<String, dynamic>, json['type'] as String),
+      // Parse the relationships object if it exists
       relationships: json['relationships'] != null
-          ? MediaRelationships.fromJson(json['relationships'])
+          ? Relationships.fromJson(
+              json['relationships'] as Map<String, dynamic>)
           : null,
-      genres: json['genres'] != null
-          ? (json['genres']['data'] as List).map((g) => Genre.fromJson(g)).toList()
-          : [],
     );
   }
 
@@ -42,7 +42,9 @@ class MediaItem {
         'id': id,
         'type': type,
         'links': links.toJson(),
-        'attributes': attributes.toJson(type), // Pass type for conditional serialization
+        'attributes':
+            attributes.toJson(type), // Pass type for conditional serialization
+        'relationships': relationships?.toJson(), // Added to serialization
       };
 }
 
@@ -136,14 +138,15 @@ class MediaAttributes {
   int? userCount;
   int? favoritesCount;
   String? startDate; // Consider parsing to DateTime
-  String? endDate;   // Consider parsing to DateTime
+  String? endDate; // Consider parsing to DateTime
   int? popularityRank;
   int? ratingRank;
   String? ageRating;
   String? ageRatingGuide;
-  String subtype; // e.g., TV, movie, manga, OVA, ONA, special, music, oneshot, novel, manhua, manhwa, doujin
-  String status;  // e.g., finished, current, upcoming, tba, unreleased, an
-  String? tba;    // Text for "To Be Announced" status
+  String
+      subtype; // e.g., TV, movie, manga, OVA, ONA, special, music, oneshot, novel, manhua, manhwa, doujin
+  String status; // e.g., finished, current, upcoming, tba, unreleased, an
+  String? tba; // Text for "To Be Announced" status
   ImageInfo? posterImage;
   ImageInfo? coverImage;
   bool? nsfw;
@@ -151,7 +154,8 @@ class MediaAttributes {
   // Anime-specific attributes
   int? episodeCount;
   int? episodeLength; // in minutes
-  int? totalLength;   // total length of all episodes in minutes (sum of episodeLength)
+  int?
+      totalLength; // total length of all episodes in minutes (sum of episodeLength)
   String? youtubeVideoId;
   // String? showType; // Often redundant with subtype, Kitsu API uses 'subtype' more consistently.
 
@@ -196,7 +200,8 @@ class MediaAttributes {
     this.serialization,
   });
 
-  factory MediaAttributes.fromJson(Map<String, dynamic> json, String mediaItemType) {
+  factory MediaAttributes.fromJson(
+      Map<String, dynamic> json, String mediaItemType) {
     // Helper to safely parse int
     int? parseInt(dynamic value) {
       if (value is int) return value;
@@ -205,15 +210,21 @@ class MediaAttributes {
     }
 
     return MediaAttributes(
-      createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt'] as String) : null,
-      updatedAt: json['updatedAt'] != null ? DateTime.tryParse(json['updatedAt'] as String) : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'] as String)
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.tryParse(json['updatedAt'] as String)
+          : null,
       slug: json['slug'] as String? ?? 'unknown-slug',
       synopsis: json['synopsis'] as String?,
       description: json['description'] as String?, // Present in your JSON
       coverImageTopOffset: parseInt(json['coverImageTopOffset']),
       titles: Titles.fromJson(json['titles'] as Map<String, dynamic>? ?? {}),
       canonicalTitle: json['canonicalTitle'] as String? ?? 'Unknown Title',
-      abbreviatedTitles: (json['abbreviatedTitles'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      abbreviatedTitles: (json['abbreviatedTitles'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       averageRating: json['averageRating'] as String?,
       userCount: parseInt(json['userCount']),
       favoritesCount: parseInt(json['favoritesCount']),
@@ -226,21 +237,39 @@ class MediaAttributes {
       subtype: json['subtype'] as String? ?? 'unknown',
       status: json['status'] as String? ?? 'unknown',
       tba: json['tba'] as String?,
-      posterImage: json['posterImage'] != null ? ImageInfo.fromJson(json['posterImage'] as Map<String, dynamic>) : null,
-      coverImage: json['coverImage'] != null ? ImageInfo.fromJson(json['coverImage'] as Map<String, dynamic>) : null,
+      posterImage: json['posterImage'] != null
+          ? ImageInfo.fromJson(json['posterImage'] as Map<String, dynamic>)
+          : null,
+      coverImage: json['coverImage'] != null
+          ? ImageInfo.fromJson(json['coverImage'] as Map<String, dynamic>)
+          : null,
       nsfw: json['nsfw'] as bool?,
 
       // Anime-specific fields are parsed if mediaItemType is 'anime'
-      episodeCount: mediaItemType.toLowerCase() == 'anime' ? parseInt(json['episodeCount']) : null,
-      episodeLength: mediaItemType.toLowerCase() == 'anime' ? parseInt(json['episodeLength']) : null,
-      totalLength: mediaItemType.toLowerCase() == 'anime' ? parseInt(json['totalLength']) : null,
-      youtubeVideoId: mediaItemType.toLowerCase() == 'anime' ? json['youtubeVideoId'] as String? : null,
+      episodeCount: mediaItemType.toLowerCase() == 'anime'
+          ? parseInt(json['episodeCount'])
+          : null,
+      episodeLength: mediaItemType.toLowerCase() == 'anime'
+          ? parseInt(json['episodeLength'])
+          : null,
+      totalLength: mediaItemType.toLowerCase() == 'anime'
+          ? parseInt(json['totalLength'])
+          : null,
+      youtubeVideoId: mediaItemType.toLowerCase() == 'anime'
+          ? json['youtubeVideoId'] as String?
+          : null,
 
       // Manga-specific fields (these would be populated if parsing manga JSON)
       // Parsed if mediaItemType is 'manga'. For now, these will be null for anime.
-      chapterCount: mediaItemType.toLowerCase() == 'manga' ? parseInt(json['chapterCount']) : null,
-      volumeCount: mediaItemType.toLowerCase() == 'manga' ? parseInt(json['volumeCount']) : null,
-      serialization: mediaItemType.toLowerCase() == 'manga' ? json['serialization'] as String? : null,
+      chapterCount: mediaItemType.toLowerCase() == 'manga'
+          ? parseInt(json['chapterCount'])
+          : null,
+      volumeCount: mediaItemType.toLowerCase() == 'manga'
+          ? parseInt(json['volumeCount'])
+          : null,
+      serialization: mediaItemType.toLowerCase() == 'manga'
+          ? json['serialization'] as String?
+          : null,
     );
   }
 
@@ -286,119 +315,54 @@ class MediaAttributes {
   }
 }
 
-class MediaRelationships {
-  final RelationshipData? genres;
+// START OF NEW/MODIFIED CODE
 
-  MediaRelationships({this.genres});
+// Model for relationship links (e.g., characters, genres)
+class RelationshipLinks {
+  String? self;
+  String? related;
 
-  factory MediaRelationships.fromJson(Map<String, dynamic> json) {
-    return MediaRelationships(
-      genres: json['genres'] != null
-          ? RelationshipData.fromJson(json['genres'])
+  RelationshipLinks({this.self, this.related});
+
+  factory RelationshipLinks.fromJson(Map<String, dynamic> json) {
+    return RelationshipLinks(
+      self: json['self'] as String?,
+      related: json['related'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'self': self,
+        'related': related,
+      };
+}
+
+// Model for the main "relationships" object
+class Relationships {
+  RelationshipLinks? characters;
+  RelationshipLinks? genres;
+  // Add other relationships as needed (e.g., staff, productions)
+
+  Relationships({this.characters, this.genres});
+
+  factory Relationships.fromJson(Map<String, dynamic> json) {
+    // Each relationship contains a 'links' object. We parse that.
+    return Relationships(
+      characters: json['characters']?['links'] != null
+          ? RelationshipLinks.fromJson(
+              json['characters']['links'] as Map<String, dynamic>)
+          : null,
+      genres: json['genres']?['links'] != null
+          ? RelationshipLinks.fromJson(
+              json['genres']['links'] as Map<String, dynamic>)
           : null,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'characters':
+            characters != null ? {'links': characters!.toJson()} : null,
+        'genres': genres != null ? {'links': genres!.toJson()} : null,
+      };
 }
-
-class RelationshipData {
-  final List<Map<String, dynamic>> data;
-
-  RelationshipData({required this.data});
-
-  factory RelationshipData.fromJson(Map<String, dynamic> json) {
-    return RelationshipData(
-      data: List<Map<String, dynamic>>.from(json['data'] ?? []),
-    );
-  }
-}
-
-class Genre {
-  final String id;
-  final String name;
-
-  Genre({required this.id, required this.name});
-
-  factory Genre.fromJson(Map<String, dynamic> json) {
-    return Genre(
-      id: json['id'],
-      name: json['attributes']['name'] ?? '',
-    );
-  }
-}
-
-class Character {
-  final String? name;
-  final CharacterImage? image;
-  final List<String> japaneseVoiceActors;
-
-  Character({this.name, this.image, this.japaneseVoiceActors = const []});
-
-  factory Character.fromJson(Map<String, dynamic> json, {List<String> voiceActors = const []}) {
-    final attributes = json['attributes'] as Map<String, dynamic>? ?? {};
-    return Character(
-      name: attributes['name'] as String?,
-      image: attributes['image'] != null
-          ? CharacterImage.fromJson(attributes['image'] as Map<String, dynamic>)
-          : null,
-      japaneseVoiceActors: voiceActors,
-    );
-  }
-
-  String? get imageUrl => image?.original;
-
-  String get voiceActorsAsString => japaneseVoiceActors.isNotEmpty
-      ? japaneseVoiceActors.join(', ')
-      : 'Unknown';
-}
-
-
-class CharacterImage {
-  final String? original;
-
-  CharacterImage({this.original});
-
-  factory CharacterImage.fromJson(Map<String, dynamic> json) {
-    return CharacterImage(
-      original: json['original'] as String?,
-    );
-  }
-}
-
-class Episode {
-  final int? number;
-  final String? canonicalTitle;
-  final String? thumbnail;
-  final String? synopsis;
-  final String? airDate;
-  final int? episodeLength;
-
-  Episode({
-    this.number,
-    this.canonicalTitle,
-    this.thumbnail,
-    this.synopsis,
-    this.airDate,
-    this.episodeLength,
-  });
-
-  factory Episode.fromJson(Map<String, dynamic> json) {
-    final attributes = json['attributes'] ?? {};
-    final thumbnailMap = attributes['thumbnail'] as Map<String, dynamic>?;
-
-    return Episode(
-      number: attributes['number'] as int?,
-      canonicalTitle: attributes['canonicalTitle'] as String?,
-      thumbnail: thumbnailMap?['original'] as String?,
-      synopsis: attributes['synopsis'] as String?,
-      airDate: attributes['airdate'] as String?, // or 'airedOn' if that's what your API returns
-      episodeLength: attributes['episodeLength'] as int?,
-    );
-  }
-}
-
-
-
-
-
-
 

@@ -1,7 +1,8 @@
 import 'package:animelagoom/Services/anime_service.dart';
 import 'package:animelagoom/Services/manga_service.dart';
-import 'package:animelagoom/models/anime_and_manga_model.dart';
 import 'package:animelagoom/core/api/api_manager.dart';
+import 'package:animelagoom/models/anime_and_manga_main_model.dart';
+import 'package:animelagoom/ui/AnimeDetailsScreen/anime_details_screen.dart';
 import 'package:flutter/material.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -87,25 +88,37 @@ class _SearchScreenState extends State<SearchScreen> {
                           separatorBuilder: (_, __) => const Divider(),
                           itemBuilder: (context, index) {
                             final item = _results[index];
-                            return ListTile(
-                                title: Text(isAnime
-                                    ? item.attributes.canonicalTitle
-                                    : item.attributes.canonicalTitle),
-                                leading: CircleAvatar(
-                                  backgroundImage: NetworkImage(item
-                                          .attributes.coverImage?.original ??
-                                      item.attributes.posterImage?.original ??
-                                      'https://via.placeholder.com/150'),
-                                  onBackgroundImageError: (_, __) =>
-                                      const Icon(Icons.broken_image),
-                                ),
-                                subtitle: Text(isAnime
-                                    ? (item).attributes.titles.en ??
-                                        item.attributes.titles.enJp ??
-                                        "unknown"
-                                    : (item).attributes.titles.en ??
-                                        item.attributes.titles.enJp ??
-                                        "unknown"));
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => AnimeDetailsScreen(
+                                      mediaItem: item,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: ListTile(
+                                  title: Text(isAnime
+                                      ? item.attributes.canonicalTitle
+                                      : item.attributes.canonicalTitle),
+                                  leading: CircleAvatar(
+                                    backgroundImage: NetworkImage(item
+                                            .attributes.coverImage?.original ??
+                                        item.attributes.posterImage?.original ??
+                                        'https://via.placeholder.com/150'),
+                                    onBackgroundImageError: (_, __) =>
+                                        const Icon(Icons.broken_image),
+                                  ),
+                                  subtitle: Text(isAnime
+                                      ? (item).attributes.titles.en ??
+                                          item.attributes.titles.enJp ??
+                                          "unknown"
+                                      : (item).attributes.titles.en ??
+                                          item.attributes.titles.enJp ??
+                                          "unknown")),
+                            );
                           },
                         ),
             ),

@@ -1,140 +1,66 @@
+import 'package:animelagoom/models/reaction_model.dart';
 import 'package:flutter/material.dart';
+import 'package:animelagoom/core/api/api_manager.dart';
+import 'package:animelagoom/services/anime_service.dart';
+import 'package:animelagoom/services/manga_service.dart';
 
-import '../../utils/app_styles.dart';
+class ReactionScreen extends StatelessWidget {
+  final String mediaId;
+  final bool isAnime; // true for anime, false for manga
 
-class ReactionScreen extends StatefulWidget{
-  const ReactionScreen({super.key});
-
-  @override
-  State<ReactionScreen> createState() => _ReactionScreenState();
-}
-
-class _ReactionScreenState extends State<ReactionScreen> {
-  String selectedSort = 'Popular';
-
-  final List<Map<String, dynamic>> popularReactions = [
-    {
-      "username": "Sam",
-      "votes": 100,
-      "text":
-      "comment1........."
-    },
-    {
-      "username": "JonathNell",
-      "votes": 85,
-      "text":
-      "comment2..."
-    },
-    {
-      "username": "Doaks",
-      "votes": 72,
-      "text":
-      "comment3......."
-    },
-    {
-      "username": "jojovonjo (Parody)",
-      "votes": 61,
-      "text":
-      "comment4....."
-    }
-  ];
-
-  final List<Map<String, dynamic>> recentReactions = [
-    {
-      "username": "jojovonjo (Parody)",
-      "votes": 61,
-      "text":
-      "comment1.."
-    },
-    {
-      "username": "AnimeFan123",
-      "votes": 40,
-      "text":
-      "comment"
-    },
-    {
-      "username": "MimiChan",
-      "votes": 33,
-      "text":
-      "comment.."
-    },
-  ];
+  const ReactionScreen({
+    required this.mediaId,
+    required this.isAnime,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> reactions = selectedSort == 'Popular'
-        ? popularReactions
-        : recentReactions;
+    // Initialize services directly in build, or better, pass them in if possible
+    final KitsuApiManager apiManager = KitsuApiManager();
+    final AnimeService animeService = AnimeService(apiManager);
+    final MangaService mangaService = MangaService(apiManager);
 
-   return  Padding(
-     padding: const EdgeInsets.all(15),
-     child: Column(
-       crossAxisAlignment: CrossAxisAlignment.start,
-       children: [
-         Row(
-           children: [
-              Text(
-               "Reactions",
-               style: AppStyles.bold20BlockRoboto,
-             ),
-             const SizedBox(width: 10),
-             DropdownButton<String>(
-               value: selectedSort,
-               icon: const Icon(Icons.arrow_drop_down),
-               elevation: 16,
-               style: const TextStyle(color: Colors.black),
-               underline: Container(height: 0),
-               onChanged:(String? newValue) {
-                if (newValue != null) {
-                   setState(() {
-                  selectedSort = newValue;
-      });
-      }
+    final Future<List<Reaction>> reactionsFuture = isAnime
+        ? animeService.fetchAnimeReactions(mediaId)
+        : mangaService.fetchMangaReactions(mediaId);
+
+    return FutureBuilder<List<Reaction>>(
+      future: reactionsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        final reactions = snapshot.data ?? [];
+        if (reactions.isEmpty) {
+          return const Center(child: Text('No characters found.'));
+        }
+        return ListView.builder(
+          itemCount: reactions.length,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            final reaction = reactions[index];
+            return ListTile(
+              leading: reaction.reactionText != null
+                  ? Image.network(
+                      reaction.userAvatar!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    )
+                  : const Icon(Icons.person),
+              title: Text(reaction.userName ?? 'Unknown User'),
+              subtitle: Text(reaction.createdAt ?? ''),
+              onTap: () {
+                // Handle tap, e.g., navigate to character detail screen
+              },
+            );
+          },
+        );
       },
-               items: <String>['Popular', 'Recent']
-                   .map<DropdownMenuItem<String>>((String value) {
-                 return DropdownMenuItem<String>(
-                   value: value,
-                   child: Text(value ),
-                 );
-               }).toList(),
-             ),
-           ],
-         ),
-         const SizedBox(height: 8),
-         ListView.separated(
-           shrinkWrap: true,
-           physics: const NeverScrollableScrollPhysics(),
-           itemCount: reactions.length,
-           separatorBuilder: (_, __) => const Divider(),
-           itemBuilder: (context, index) {
-             final reaction = reactions[index];
-             return ListTile(
-               leading: Column(
-                 mainAxisAlignment: MainAxisAlignment.center,
-                 children: [
-                   const Icon(Icons.arrow_drop_up, size: 20),
-                   Text(reaction["votes"].toString(),
-                       style:  AppStyles.bold20BlockRoboto),
-                 ],
-               ),
-               title: Text(
-                 reaction["username"],
-                 style: const TextStyle(
-                     fontWeight: FontWeight.bold, color: Colors.grey),
-               ),
-               subtitle: Padding(
-                 padding: const EdgeInsets.only(top: 4.0),
-                 child: Text(
-                   reaction["text"],
-                   style: AppStyles.bold20BlockRoboto,
-                 ),
-               ),
-             );
-           },
-         )
-       ],
-     ),
-   );
+    );
   }
 }

@@ -65,17 +65,6 @@ class _HomeScreenState extends State<HomeScreen> {
       body: ListView(
         padding: const EdgeInsets.all(12),
         children: [
-          // TextField(
-          //   controller: searchController,
-          //   decoration: InputDecoration(
-          //     hintText: 'Search $contentType...',
-          //     prefixIcon: const Icon(Icons.search),
-          //     border: OutlineInputBorder(
-          //       borderRadius: BorderRadius.circular(12),
-          //     ),
-          //   ),
-          //   onSubmitted: _onSearchSubmitted,
-          // ),
           InkWell(
             onTap: () => _onSearchSubmitted(searchController.text),
             child: Container(

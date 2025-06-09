@@ -1,6 +1,7 @@
+import 'package:animelagoom/models/anime_and_manga_main_model.dart';
 import 'package:animelagoom/ui/AnimeDetailsScreen/anime_details_screen.dart';
 import 'package:flutter/material.dart';
-import '../../../models/anime_and_manga_model.dart';
+
 
 class AnimeCard extends StatelessWidget {
   final MediaItem anime;
@@ -14,7 +15,7 @@ class AnimeCard extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => AnimeDetailsScreen(anime: anime,),
+        builder: (_) => AnimeDetailsScreen(mediaItem: anime,),
       ),
     );
   },

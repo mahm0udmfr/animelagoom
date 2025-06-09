@@ -1,92 +1,66 @@
-import 'package:animelagoom/utils/app_styles.dart';
-import 'package:animelagoom/utils/assets_manager.dart';
+import 'package:animelagoom/models/character_model.dart';
 import 'package:flutter/material.dart';
+import 'package:animelagoom/core/api/api_manager.dart';
+import 'package:animelagoom/services/anime_service.dart';
+import 'package:animelagoom/services/manga_service.dart';
 
-import '../../Core/api/api_manager.dart';
-import '../../models/anime_and_manga_model.dart';
-import 'char_card.dart';
+class CharactersScreen extends StatelessWidget {
+  final String mediaId;
+  final bool isAnime; // true for anime, false for manga
 
-class CharacterScreen extends StatefulWidget {
-  final String animeId;
-  const CharacterScreen({super.key, required this.animeId});
-
-  @override
-  State<CharacterScreen> createState() => _CharacterScreenState();
-}
-
-class _CharacterScreenState extends State<CharacterScreen> {
-  late Future<List<CharacterClass>> char;
-
-  @override
-  void initState() {
-    super.initState();
-    char = fetchCharactersAsCharacterClass(widget.animeId);
-  }
-
-  Future<List<CharacterClass>> fetchCharactersAsCharacterClass(String animeId) async {
-    final apiCharacters = await KitsuApiManager().fetchCharactersForAnime(animeId);
-
-    return apiCharacters.map((c) {
-      return CharacterClass(
-        name: c.name ?? 'Unknown',
-        japaneseVoiceActor: c.voiceActorsAsString ?? 'Unknown',
-        imageUrl: c.imageUrl ?? '',
-      );
-    }).toList();
-  }
-
-
+  const CharactersScreen({
+    required this.mediaId,
+    required this.isAnime,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      child: FutureBuilder<List<CharacterClass>>(
-        future: char,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
+    // Initialize services directly in build, or better, pass them in if possible
+    final KitsuApiManager apiManager = KitsuApiManager();
+    final AnimeService animeService = AnimeService(apiManager);
+    final MangaService mangaService = MangaService(apiManager);
 
-          final characters = snapshot.data ?? [];
+    final Future<List<Character>> charactersFuture = isAnime
+        ? animeService.fetchAnimeCharacters(mediaId)
+        : mangaService.fetchMangaCharacters(mediaId);
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Characters', style: AppStyles.bold20BlockRoboto),
-              const SizedBox(height: 8),
-              Text('List of characters and their Japanese voice actors.',
-                  style: AppStyles.regular16greyColorRoboto),
-              const SizedBox(height: 16),
-              ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: characters.length,
-                itemBuilder: (context, index) {
-                  return CharacterCard(character: characters[index]);
-                },
-              ),
-              const SizedBox(height: 30),
-            ],
-          );
-        },
-      ),
+    return FutureBuilder<List<Character>>(
+      future: charactersFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        final characters = snapshot.data ?? [];
+        if (characters.isEmpty) {
+          return const Center(child: Text('No characters found.'));
+        }
+        return ListView.builder(
+          itemCount: characters.length,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            final character = characters[index];
+            return ListTile(
+              leading: character.imageUrl != null
+                  ? Image.network(
+                      character.imageUrl!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    )
+                  : const Icon(Icons.person),
+              title: Text(character.name ),
+              subtitle: Text(character.description ?? ''),
+              onTap: () {
+                // Handle tap, e.g., navigate to character detail screen
+              },
+            );
+          },
+        );
+      },
     );
   }
 }
-
-class CharacterClass {
-  final String name;
-  final String japaneseVoiceActor;
-  final String imageUrl;
-
-  const CharacterClass({
-    required this.name,
-    required this.japaneseVoiceActor,
-    required this.imageUrl,
-  });
-}
-
-

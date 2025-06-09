@@ -1,6 +1,6 @@
 import 'package:animelagoom/core/api/api_manager.dart';
 import 'package:animelagoom/Services/anime_service.dart';
-import 'package:animelagoom/models/anime_and_manga_model.dart';
+import 'package:animelagoom/models/anime_and_manga_main_model.dart';
 import 'package:animelagoom/ui/HomeScreen/widgets/anime_card.dart';
 import 'package:flutter/material.dart';
 

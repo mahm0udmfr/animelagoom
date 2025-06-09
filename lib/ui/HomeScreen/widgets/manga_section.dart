@@ -1,4 +1,4 @@
-import 'package:animelagoom/models/anime_and_manga_model.dart';
+import 'package:animelagoom/models/anime_and_manga_main_model.dart';
 import 'package:flutter/material.dart';
 import 'package:animelagoom/core/api/api_manager.dart';
 import 'package:animelagoom/Services/manga_service.dart';
