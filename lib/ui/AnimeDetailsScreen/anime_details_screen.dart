@@ -1,3 +1,4 @@
+import 'package:animelagoom/Services/anime_service.dart';
 import 'package:animelagoom/models/anime_and_manga_main_model.dart';
 import 'package:animelagoom/ui/AnimeDetailsScreen/char_screen.dart';
 import 'package:animelagoom/ui/AnimeDetailsScreen/episode_screen.dart';
@@ -7,6 +8,8 @@ import 'package:animelagoom/utils/app_colors.dart';
 import 'package:animelagoom/utils/app_styles.dart';
 import 'package:animelagoom/utils/assets_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class AnimeDetailsScreen extends StatefulWidget {
   static String animeDetailsRoute = "animeDetailsRoute";
@@ -19,6 +22,7 @@ class AnimeDetailsScreen extends StatefulWidget {
 }
 
 class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
+
   String selectedTab = "Summary";
 
   void selectTab(String tab) {
@@ -26,6 +30,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
       selectedTab = tab;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -113,6 +118,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                           SizedBox(
                             height: 10,
                           ),
+
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [

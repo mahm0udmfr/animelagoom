@@ -86,13 +86,13 @@ class _EpisodesScreenState extends State<EpisodesScreen> {
                 MaterialPageRoute(
                   builder: (_) => Scaffold(
                     appBar: AppBar(
-                      title: Text('Episode ${item.number ?? 'N/A'} Details'),
+                      title: Text('${widget.mediaType == 'anime' ? 'Episode' : 'Chapter'} ${item.number ?? 'N/A'} Details'),
                     ),
                     body: SingleChildScrollView(
                       padding: const EdgeInsets.all(16),
                       child: EpisodeDetailsCard(
                         imageUrl: item.thumbnail?.original ?? '',
-                        episodeNumber: 'Episode ${item.number ?? 0}',
+                        episodeNumber: '${widget.mediaType == 'anime' ? 'Episode' : 'Chapter'} ${item.number ?? 0}',
                         title: item.displayTitle,
                         duration: (item.length != null && item.length! > 0)
                             ? '${item.length} minutes'
@@ -106,6 +106,7 @@ class _EpisodesScreenState extends State<EpisodesScreen> {
               );
             },
             child: EpisodeCard(
+              mediaType: widget.mediaType,
               imageUrl: item.thumbnail?.original ?? widget.mediaImage,
               episodeNumber: number,
               episodeTitle: item.displayTitle ,

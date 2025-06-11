@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:animelagoom/core/api/api_manager.dart';
 import 'package:animelagoom/models/anime_and_manga_main_model.dart';
 import 'package:animelagoom/models/character_model.dart';
 import 'package:animelagoom/models/episode_model.dart';
 import 'package:animelagoom/models/reaction_model.dart';
 import 'package:animelagoom/models/related_media_model.dart';
+import 'package:http/http.dart' as http;
+
+import '../models/genere_model.dart';
 
 class AnimeService {
   final KitsuApiManager _apiManager;
@@ -145,4 +150,20 @@ class AnimeService {
   List<MediaItem> _extractAnimeList(Map<String, dynamic> json) {
     return (json['data'] as List).map((e) => MediaItem.fromJson(e)).toList();
   }
+
+
+  static Future<List<Genre>> fetchGenresByAnimeId(String animeId) async {
+    final url = Uri.parse("https://kitsu.io/api/edge/anime/$animeId/genres");
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonBody = jsonDecode(response.body);
+      return GenreListResponse.fromJson(jsonBody).data;
+    } else {
+      throw Exception("Failed to load genres for anime ID: $animeId");
+    }
+  }
+
+
+
 }
