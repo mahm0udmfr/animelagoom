@@ -249,10 +249,10 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
           mediaId: widget.mediaItem.id,
       );
       case "Franchise":
-      // return Container(
-      //   color: Colors.orange,
-      //   height: 500,
-      // );
+      return Container(
+        color: Colors.orange,
+        height: 500,
+      );
       default:
         return Container(
           color: Colors.blue,
