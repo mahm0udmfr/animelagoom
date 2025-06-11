@@ -66,8 +66,6 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                   buildTab("Characters"),
                   buildSeparator(),
                   buildTab("Reactions"),
-                  buildSeparator(),
-                  buildTab("Franchise"),
                 ],
               ),
             ),
@@ -248,11 +246,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
           isAnime: widget.mediaItem.type == "anime" ? true : false,
           mediaId: widget.mediaItem.id,
       );
-      case "Franchise":
-      // return Container(
-      //   color: Colors.orange,
-      //   height: 500,
-      // );
+
       default:
         return Container(
           color: Colors.blue,

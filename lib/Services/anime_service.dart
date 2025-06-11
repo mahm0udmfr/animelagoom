@@ -52,6 +52,7 @@ class AnimeService {
     return _extractAnimeList(json);
   }
 
+
   Future<List<Episode>> fetchAnimeEpisodes(String animeId,
       {int limit = 20, int offset = 0}) async {
     final json = await _apiManager.get(
@@ -64,6 +65,7 @@ class AnimeService {
     );
 
     return (json['data'] as List).map((e) => Episode.fromJson(e)).toList();
+
   }
 
 Future<List<Character>> fetchAnimeCharacters(String animeId,

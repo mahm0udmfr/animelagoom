@@ -1,32 +1,33 @@
-// lib/models/episode_model.dart (or episodes_model.dart)
 
-class Episode { // Renamed from Episodes for common practice, but functionally same
-  final String id; // Add id, as it's part of the API response and useful
+class Episode {
+  final String id;
   final String? synopsis;
   final String? description;
   final Map<String, dynamic>? titles;
   final String? canonicalTitle;
   final int? number;
   final KitsuThumbnail? thumbnail;
-  // Potentially add airdate, length, etc., as per Kitsu API
+
+  final int? length;      // duration in minutes, nullable
+  final String? airdate;  // air date string, nullable
 
   Episode({
-    required this.id, // ID is crucial for JSON:API
+    required this.id,
     this.synopsis,
     this.description,
     this.titles,
     this.canonicalTitle,
     this.number,
     this.thumbnail,
+    this.length,
+    this.airdate,
   });
 
-  // Manual factory constructor for deserialization (JSON to Dart object)
   factory Episode.fromJson(Map<String, dynamic> json) {
-    // Kitsu API data is always nested under 'attributes'
     final attributes = json['attributes'] as Map<String, dynamic>;
 
     return Episode(
-      id: json['id'] as String, // ID is at the top level, not in attributes
+      id: json['id'] as String,
       synopsis: attributes['synopsis'] as String?,
       description: attributes['description'] as String?,
       titles: attributes['titles'] as Map<String, dynamic>?,
@@ -35,6 +36,8 @@ class Episode { // Renamed from Episodes for common practice, but functionally s
       thumbnail: attributes['thumbnail'] != null
           ? KitsuThumbnail.fromJson(attributes['thumbnail'] as Map<String, dynamic>)
           : null,
+      length: attributes['length'] as int?,
+      airdate: attributes['airdate'] as String?,
     );
   }
 
@@ -67,9 +70,22 @@ class Episode { // Renamed from Episodes for common practice, but functionally s
     }
     return 'No Description';
   }
+
+  String get displayDuration {
+    if (length != null && length! > 0) {
+      return '$length min';
+    }
+    return 'Unknown duration';
+  }
+
+  String get displayAirDate {
+    if (airdate != null && airdate!.isNotEmpty) {
+      return airdate!;
+    }
+    return 'Unknown air date';
+  }
 }
 
-// KitsuThumbnail model remains correct as is
 class KitsuThumbnail {
   final String? tiny;
   final String? small;
