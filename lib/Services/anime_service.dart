@@ -71,8 +71,9 @@ class AnimeService {
 Future<List<Character>> fetchAnimeCharacters(String animeId,
     {int limit = 20, int offset = 0}) async {
   final json = await _apiManager.get(
-    '/anime/$animeId/anime-characters?include=character',
+    '/anime/$animeId/characters',
     queryParams: {
+      'include': 'character.castings.person',
       'page[limit]': '$limit',
       'page[offset]': '$offset',
       'sort': 'role',
