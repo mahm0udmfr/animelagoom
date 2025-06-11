@@ -147,7 +147,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
           ),
 
           SizedBox(height: 15),
-
+          Chip(label: Text("Genres: ${attributes.subtype} المفروض تتعمل لسة")),
+SizedBox(height: 15),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
