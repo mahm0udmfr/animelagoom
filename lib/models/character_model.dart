@@ -1,28 +1,52 @@
 class Character {
   final String id;
   final String name;
-  final String? role;
-  final String? description;
   final String? imageUrl;
+  final String? role;
+  final String? voiceActor;
 
   Character({
     required this.id,
     required this.name,
-    this.role,
-    this.description,
     this.imageUrl,
+    this.role,
+    this.voiceActor,
   });
 
-  factory Character.fromKitsuJson(Map<String, dynamic> animeCharJson, Map<String, dynamic>? charJson) {
-    final role = animeCharJson['attributes']?['role'];
-    final attributes = charJson?['attributes'];
+  factory Character.fromJson(Map<String, dynamic> json, Map<String, dynamic> included) {
+    final attributes = json['attributes'];
+    final characterImage = attributes['image']?['original'];
+
+    // Map related casting and person if included
+    String? role;
+    String? voiceActor;
+
+    if (included.isNotEmpty) {
+      final castings = included['castings'] as List<dynamic>?;
+      final people = included['people'] as List<dynamic>?;
+
+      if (castings != null && castings.isNotEmpty) {
+        role = castings.first['attributes']['role'];
+        final personId = castings.first['relationships']['person']['data']['id'];
+
+        if (people != null) {
+          final person = people.firstWhere(
+            (p) => p['id'] == personId,
+            orElse: () => null,
+          );
+          if (person != null) {
+            voiceActor = person['attributes']['name'];
+          }
+        }
+      }
+    }
 
     return Character(
-      id: charJson?['id'] ?? '',
-      name: attributes?['name'] ?? 'Unknown',
+      id: json['id'],
+      name: attributes['name'] ?? 'Unknown',
+      imageUrl: characterImage,
       role: role,
-      description: attributes?['description'],
-      imageUrl: attributes?['image']?['original'],
+      voiceActor: voiceActor,
     );
   }
 }

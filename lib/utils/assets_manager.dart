@@ -41,6 +41,7 @@ class AssetsManager {
   static const String netflix = 'assets/images/net.jpg';
   static const String hulu = 'assets/images/hulu.png';
   static const String crunchyroll = 'assets/images/crun.png';
+  static const String animeLago = 'assets/images/animeLago.png';
 
 
 }

@@ -29,7 +29,7 @@ class AnimeCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  anime.attributes.coverImage?.original ?? anime.attributes.posterImage?.original ?? '',
+                  anime.attributes.posterImage?.original ?? anime.attributes.coverImage?.original?? '',
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return const Center(child: CircularProgressIndicator(strokeWidth: 2));
