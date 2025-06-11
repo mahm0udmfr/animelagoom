@@ -43,7 +43,7 @@ class _ReactionScreenState extends State<ReactionScreen> {
         }
         final reactions = snapshot.data ?? [];
         if (reactions.isEmpty) {
-          return const Center(child: Text('No characters found.'));
+          return const Center(child: Text('No Reactions found.'));
         }
         return ListView.builder(
           itemCount: reactions.length,
