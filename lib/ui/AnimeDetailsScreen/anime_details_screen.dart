@@ -100,14 +100,9 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                     Expanded(
                       child: Column(
                         children: [
-                          buildActionButton(
-                            "Completed",
-                            Colors.teal,
-                          ),
-                          const SizedBox(height: 8),
-                          buildActionButton("Want to Watch", Colors.blue),
-                          const SizedBox(height: 8),
-                          buildActionButton("Started Watching", Colors.purple),
+
+                          buildActionButton("Watch List", Colors.teal),
+
                           SizedBox(
                             height: 40,
                           ),
