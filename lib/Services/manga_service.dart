@@ -99,51 +99,76 @@ class MangaService {
     return (json['data'] as List).map((e) => Episode.fromJson(e)).toList();
   }
 
-  Future<List<Character>> fetchMangaCharacters(String mangaId,
-      {int limit = 20, int offset = 0}) async {
-    final json = await _api.get(
-      '/manga/$mangaId/manga-characters?include=character',
-      queryParams: {
-        'page[limit]': '$limit',
-        'page[offset]': '$offset',
-        'sort': 'role',
-      },
+Future<List<Character>> fetchMangaCharacters(String mangaId,
+    {int limit = 20, int offset = 0}) async {
+  final json = await _api.get(
+    '/manga/$mangaId/characters',
+    queryParams: {
+      'page[limit]': '$limit',
+      'page[offset]': '$offset',
+      'include': 'character.castings.person',
+    },
+  );
+
+  final includedList = json['included'] as List<dynamic>? ?? [];
+
+  final Map<String, List<dynamic>> included = {
+    'castings': includedList.where((e) => e['type'] == 'castings').toList(),
+    'people': includedList.where((e) => e['type'] == 'people').toList(),
+    'characters': includedList.where((e) => e['type'] == 'characters').toList(),
+  };
+
+  return (json['data'] as List).map((entry) {
+    final characterRel = entry['relationships']['character']['data'];
+    final characterId = characterRel?['id'];
+
+    final characterData = included['characters']?.firstWhere(
+      (e) => e['id'] == characterId,
+      orElse: () => null,
     );
 
-    final dataList = json['data'] as List<dynamic>;
-    final included = json['included'] as List<dynamic>? ?? [];
+    if (characterData != null) {
+      final castings = included['castings']
+          ?.where((e) =>
+              e['relationships']['character']['data']['id'] == characterId)
+          .toList();
 
-    // Match character data by ID
-    final includedCharacters = {
-      for (var item in included)
-        if (item['type'] == 'characters') item['id']: item
+      final people = included['people'];
+
+      return Character.fromJson(characterData, {
+        'castings': castings ?? [],
+        'people': people ?? [],
+      });
+    }
+
+    return Character(
+      id: characterId ?? 'unknown',
+      name: 'Unknown',
+    );
+  }).toList();
+}
+
+  Future<List<Reaction>> fetchMangaReactions(
+    String mediaId,
+  ) async {
+    final json = await _api.get(
+      '/reviews?filter[mediaId]=$mediaId&include=user',
+    );
+
+    final included = (json['included'] as List<dynamic>?) ?? [];
+    final Map<String, List<dynamic>> inc = {
+      'user': included.where((e) => e['type'] == 'users').toList()
     };
-
-    return dataList.map((mangaChar) {
-      final characterId = mangaChar['relationships']['character']['data']['id'];
-      final characterJson = includedCharacters[characterId];
-      return Character.fromKitsuJson(mangaChar, characterJson);
-    }).toList();
+    return (json['data'] as List)
+        .map((e) => Reaction.fromJson(e as Map<String, dynamic>, inc))
+        .toList();
   }
 
-  Future<List<Reaction>> fetchMangaReactions(String mangaId,
-      {int limit = 20, int offset = 0}) async {
-    final json = await _api.get(
-      '/manga/$mangaId/media-reactions',
-      queryParams: {
-        'page[limit]': '$limit',
-        'page[offset]': '$offset',
-        'sort': '-createdAt',
-      },
-    );
 
-    return (json['data'] as List).map((e) => Reaction.fromJson(e)).toList();
-  }
-
-  Future<List<FranchiseRelation>> fetchMangaFranchise(String mangaId) async {
+  Future<List<Franchise>> fetchMangaFranchise(String mangaId) async {
     final json = await _api.get('/manga/$mangaId/relationships/mappings');
     return (json['data'] as List)
-        .map((e) => FranchiseRelation.fromJson(e))
+        .map((e) => Franchise.fromJson(e))
         .toList();
   }
 
@@ -151,3 +176,5 @@ class MangaService {
     return (json['data'] as List).map((e) => MediaItem.fromJson(e)).toList();
   }
 }
+
+

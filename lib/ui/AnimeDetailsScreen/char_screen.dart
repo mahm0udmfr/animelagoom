@@ -53,7 +53,7 @@ class CharactersScreen extends StatelessWidget {
                     )
                   : const Icon(Icons.person),
               title: Text(character.name ),
-              subtitle: Text(character.description ?? ''),
+              subtitle: Text(character.role ?? ''),
               onTap: () {
                 // Handle tap, e.g., navigate to character detail screen
               },
