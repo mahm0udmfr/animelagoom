@@ -4,6 +4,8 @@ import 'package:animelagoom/core/api/api_manager.dart';
 import 'package:animelagoom/services/anime_service.dart';
 import 'package:animelagoom/services/manga_service.dart';
 
+import 'char_card.dart';
+
 class CharactersScreen extends StatelessWidget {
   final String mediaId;
   final bool isAnime; // true for anime, false for manga
@@ -41,26 +43,32 @@ class CharactersScreen extends StatelessWidget {
         return ListView.builder(
           itemCount: characters.length,
           shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             final character = characters[index];
-            return ListTile(
-              leading: character.imageUrl != null
-                  ? Image.network(
-                      character.imageUrl!,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    )
-                  : const Icon(Icons.person),
-              title: Text(character.name ),
-              subtitle: Text(character.role ?? ''),
-              onTap: () {
-                // Handle tap, e.g., navigate to character detail screen
-              },
+            return CharacterCard(
+                imageUrl: character.imageUrl!,
+              name:character.name ,
             );
+            //   ListTile(
+            //   leading: character.imageUrl != null
+            //       ? Image.network(
+            //           character.imageUrl!,
+            //           width: 100,
+            //           height: 100,
+            //           fit: BoxFit.cover,
+            //         )
+            //       : const Icon(Icons.person),
+            //   title: Text(character.name ),
+            //   subtitle: Text(character.description ?? ''),
+            //   onTap: () {
+            //     // Handle tap, e.g., navigate to character detail screen
+            //   },
+            // );
           },
         );
       },
     );
   }
 }
+

@@ -66,8 +66,6 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                   buildTab("Characters"),
                   buildSeparator(),
                   buildTab("Reactions"),
-                  buildSeparator(),
-                  buildTab("Franchise"),
                 ],
               ),
             ),
@@ -102,14 +100,9 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                     Expanded(
                       child: Column(
                         children: [
-                          buildActionButton(
-                            "Completed",
-                            Colors.teal,
-                          ),
-                          const SizedBox(height: 8),
-                          buildActionButton("Want to Watch", Colors.blue),
-                          const SizedBox(height: 8),
-                          buildActionButton("Started Watching", Colors.purple),
+
+                          buildActionButton("Watch List", Colors.teal),
+
                           SizedBox(
                             height: 40,
                           ),
@@ -248,11 +241,7 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
           isAnime: widget.mediaItem.type == "anime" ? true : false,
           mediaId: widget.mediaItem.id,
       );
-      case "Franchise":
-      return Container(
-        color: Colors.orange,
-        height: 500,
-      );
+
       default:
         return Container(
           color: Colors.blue,

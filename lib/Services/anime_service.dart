@@ -84,7 +84,7 @@ class AnimeService {
       'castings': includedList.where((e) => e['type'] == 'castings').toList(),
       'people': includedList.where((e) => e['type'] == 'people').toList(),
       'characters':
-          includedList.where((e) => e['type'] == 'characters').toList(),
+      includedList.where((e) => e['type'] == 'characters').toList(),
     };
 
     return (json['data'] as List).map((entry) {
@@ -92,7 +92,7 @@ class AnimeService {
       final characterId = characterRel?['id'];
 
       final characterData = included['characters']?.firstWhere(
-        (e) => e['id'] == characterId,
+            (e) => e['id'] == characterId,
         orElse: () => null,
       );
 
@@ -100,7 +100,7 @@ class AnimeService {
         // Filter castings for this character
         final castings = included['castings']
             ?.where((e) =>
-                e['relationships']['character']['data']['id'] == characterId)
+        e['relationships']['character']['data']['id'] == characterId)
             .toList();
 
         final people = included['people'];
@@ -119,8 +119,8 @@ class AnimeService {
   }
 
   Future<List<Reaction>> fetchAnimeReactions(
-    String mediaId,
-  ) async {
+      String mediaId,
+      ) async {
     final json = await _apiManager.get(
       '/reviews?filter[mediaId]=$mediaId&include=user',
     );
@@ -136,7 +136,7 @@ class AnimeService {
 
   Future<List<Franchise>> fetchAnimeFranchise(String animeId) async {
     final json =
-        await _apiManager.get('/anime/$animeId/relationships/mappings');
+    await _apiManager.get('/anime/$animeId/relationships/mappings');
     return (json['data'] as List)
         .map((e) => Franchise.fromJson(e))
         .toList();
