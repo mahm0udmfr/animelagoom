@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'package:animelagoom/models/anime_and_manga_main_model.dart';
 import 'package:animelagoom/models/character_model.dart';
 import 'package:animelagoom/models/episode_model.dart';
+import 'package:animelagoom/models/genere_model.dart';
 import 'package:animelagoom/models/reaction_model.dart';
 import 'package:animelagoom/models/related_media_model.dart';
+import 'package:http/http.dart' as http;
 import '../core/api/api_manager.dart';
 
 class MangaService {
@@ -99,54 +102,55 @@ class MangaService {
     return (json['data'] as List).map((e) => Episode.fromJson(e)).toList();
   }
 
-Future<List<Character>> fetchMangaCharacters(String mangaId,
-    {int limit = 20, int offset = 0}) async {
-  final json = await _api.get(
-    '/manga/$mangaId/characters',
-    queryParams: {
-      'page[limit]': '$limit',
-      'page[offset]': '$offset',
-      'include': 'character.castings.person',
-    },
-  );
-
-  final includedList = json['included'] as List<dynamic>? ?? [];
-
-  final Map<String, List<dynamic>> included = {
-    'castings': includedList.where((e) => e['type'] == 'castings').toList(),
-    'people': includedList.where((e) => e['type'] == 'people').toList(),
-    'characters': includedList.where((e) => e['type'] == 'characters').toList(),
-  };
-
-  return (json['data'] as List).map((entry) {
-    final characterRel = entry['relationships']['character']['data'];
-    final characterId = characterRel?['id'];
-
-    final characterData = included['characters']?.firstWhere(
-      (e) => e['id'] == characterId,
-      orElse: () => null,
+  Future<List<Character>> fetchMangaCharacters(String mangaId,
+      {int limit = 20, int offset = 0}) async {
+    final json = await _api.get(
+      '/manga/$mangaId/characters',
+      queryParams: {
+        'page[limit]': '$limit',
+        'page[offset]': '$offset',
+        'include': 'character.castings.person',
+      },
     );
 
-    if (characterData != null) {
-      final castings = included['castings']
-          ?.where((e) =>
-              e['relationships']['character']['data']['id'] == characterId)
-          .toList();
+    final includedList = json['included'] as List<dynamic>? ?? [];
 
-      final people = included['people'];
+    final Map<String, List<dynamic>> included = {
+      'castings': includedList.where((e) => e['type'] == 'castings').toList(),
+      'people': includedList.where((e) => e['type'] == 'people').toList(),
+      'characters':
+          includedList.where((e) => e['type'] == 'characters').toList(),
+    };
 
-      return Character.fromJson(characterData, {
-        'castings': castings ?? [],
-        'people': people ?? [],
-      });
-    }
+    return (json['data'] as List).map((entry) {
+      final characterRel = entry['relationships']['character']['data'];
+      final characterId = characterRel?['id'];
 
-    return Character(
-      id: characterId ?? 'unknown',
-      name: 'Unknown',
-    );
-  }).toList();
-}
+      final characterData = included['characters']?.firstWhere(
+        (e) => e['id'] == characterId,
+        orElse: () => null,
+      );
+
+      if (characterData != null) {
+        final castings = included['castings']
+            ?.where((e) =>
+                e['relationships']['character']['data']['id'] == characterId)
+            .toList();
+
+        final people = included['people'];
+
+        return Character.fromJson(characterData, {
+          'castings': castings ?? [],
+          'people': people ?? [],
+        });
+      }
+
+      return Character(
+        id: characterId ?? 'unknown',
+        name: 'Unknown',
+      );
+    }).toList();
+  }
 
   Future<List<Reaction>> fetchMangaReactions(
     String mediaId,
@@ -164,17 +168,24 @@ Future<List<Character>> fetchMangaCharacters(String mangaId,
         .toList();
   }
 
-
   Future<List<Franchise>> fetchMangaFranchise(String mangaId) async {
     final json = await _api.get('/manga/$mangaId/relationships/mappings');
-    return (json['data'] as List)
-        .map((e) => Franchise.fromJson(e))
-        .toList();
+    return (json['data'] as List).map((e) => Franchise.fromJson(e)).toList();
   }
 
   List<MediaItem> _extractMangaList(Map<String, dynamic> json) {
     return (json['data'] as List).map((e) => MediaItem.fromJson(e)).toList();
   }
+
+  static Future<List<Genre>> fetchGenresByMangaId(String mangaid) async {
+    final url = Uri.parse("https://kitsu.io/api/edge/manga/$mangaid/categories");
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonBody = jsonDecode(response.body);
+      return GenreListResponse.fromJson(jsonBody).data;
+    } else {
+      throw Exception("Failed to load genres for anime ID: $mangaid");
+    }
+  }
 }
-
-

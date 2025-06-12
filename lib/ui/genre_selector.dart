@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'genere_model.dart';
+import '../models/genere_model.dart';
 
 class GenreSelector extends StatefulWidget {
   final List<Genre> genres;
