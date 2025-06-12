@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../Services/anime_service.dart';
+import '../../Services/manga_service.dart';
 import '../../models/genere_model.dart';
-import '../../models/genre_selector.dart';
+import '../genre_selector.dart';
 
 class SummaryScreen extends StatefulWidget {
   final MediaItem anime;
@@ -33,13 +34,19 @@ class _SummaryScreenState extends State<SummaryScreen> {
   Future<void> loadGenres() async {
     try {
       final animeId = widget.anime.id;
-      final genres = await AnimeService.fetchGenresByAnimeId(animeId);
+      final dynamic genres;
+      if (widget.anime.type == 'anime') {
+        genres = await AnimeService.fetchGenresByAnimeId(animeId);
+      } else {
+        genres = await MangaService.fetchGenresByMangaId(animeId);
+      }
+
       setState(() {
         this.genres = genres;
         isLoadingGenres = false;
       });
     } catch (e) {
-      print("Error fetching genres: $e");
+      // print("Error fetching genres: $e");
       setState(() {
         isLoadingGenres = false;
       });
@@ -182,11 +189,10 @@ class _SummaryScreenState extends State<SummaryScreen> {
           isLoadingGenres
               ? const CircularProgressIndicator()
               : (genres != null && genres!.isNotEmpty
-              ? GenreSelector(genres: genres!)
-              : const Text("No genres available")),
+                  ? GenreSelector(genres: genres!)
+                  : const Text("No genres available")),
 
-
-SizedBox(height: 15),
+          SizedBox(height: 15),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(

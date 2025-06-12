@@ -48,6 +48,7 @@ class _ReactionScreenState extends State<ReactionScreen> {
         return ListView.builder(
           itemCount: reactions.length,
           shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             final reaction = reactions[index];
             return Card(

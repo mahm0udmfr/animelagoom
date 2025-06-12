@@ -1,8 +1,6 @@
-import 'package:animelagoom/models/character_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/app_styles.dart';
-import 'char_screen.dart';
 
 class CharacterCard extends StatelessWidget {
   const CharacterCard({super.key, required this.imageUrl,

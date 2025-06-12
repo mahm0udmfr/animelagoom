@@ -4,11 +4,12 @@ import 'package:animelagoom/core/api/api_manager.dart';
 import 'package:animelagoom/models/anime_and_manga_main_model.dart';
 import 'package:animelagoom/models/character_model.dart';
 import 'package:animelagoom/models/episode_model.dart';
+import 'package:animelagoom/models/genere_model.dart';
 import 'package:animelagoom/models/reaction_model.dart';
 import 'package:animelagoom/models/related_media_model.dart';
 import 'package:http/http.dart' as http;
 
-import '../models/genere_model.dart';
+
 
 class AnimeService {
   final KitsuApiManager _apiManager;

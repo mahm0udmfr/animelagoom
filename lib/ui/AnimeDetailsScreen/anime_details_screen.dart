@@ -1,4 +1,3 @@
-import 'package:animelagoom/Services/anime_service.dart';
 import 'package:animelagoom/models/anime_and_manga_main_model.dart';
 import 'package:animelagoom/ui/AnimeDetailsScreen/char_screen.dart';
 import 'package:animelagoom/ui/AnimeDetailsScreen/episode_screen.dart';
@@ -9,7 +8,6 @@ import 'package:animelagoom/utils/app_styles.dart';
 import 'package:animelagoom/utils/assets_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 
 class AnimeDetailsScreen extends StatefulWidget {
   static String animeDetailsRoute = "animeDetailsRoute";
@@ -22,7 +20,6 @@ class AnimeDetailsScreen extends StatefulWidget {
 }
 
 class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
-
   String selectedTab = "Summary";
 
   void selectTab(String tab) {
@@ -30,7 +27,6 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
       selectedTab = tab;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -105,30 +101,57 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
                     Expanded(
                       child: Column(
                         children: [
-
                           buildActionButton("Watch List", Colors.teal),
-
                           SizedBox(
                             height: 40,
                           ),
-                          Text(
-                            'Watch Online ',
-                            style: AppStyles.regular16greyRoboto,
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              buildServiceBox(AssetsManager.netflix),
-                              const SizedBox(width: 8),
-                              buildServiceBox(AssetsManager.hulu),
-                              const SizedBox(width: 8),
-                              buildServiceBox(AssetsManager.crunchyroll),
-                            ],
-                          )
+                          widget.mediaItem.type == 'manga'
+                              ? SizedBox()
+                              : Text(
+                                  'Watch Online ',
+                                  style: AppStyles.regular16greyRoboto,
+                                ),
+                          widget.mediaItem.type == 'manga'
+                              ? SizedBox()
+                              : SizedBox(
+                                  height: 10,
+                                ),
+                          widget.mediaItem.type == 'manga'
+                              ? SizedBox()
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    InkWell(
+                                        onTap: () {
+                                          launchUrl(
+                                            Uri.parse(
+                                                'https://www.netflix.com/search?q=${widget.mediaItem.attributes.canonicalTitle}'),
+                                          );
+                                        },
+                                        child: buildServiceBox(
+                                            AssetsManager.netflix)),
+                                    const SizedBox(width: 8),
+                                    InkWell(
+                                        onTap: () {
+                                          launchUrl(
+                                            Uri.parse(
+                                                'https://www.hulu.com/search?q=${widget.mediaItem.attributes.canonicalTitle}'),
+                                          );
+                                        },
+                                        child: buildServiceBox(
+                                            AssetsManager.hulu)),
+                                    const SizedBox(width: 8),
+                                    InkWell(
+                                        onTap: () {
+                                          launchUrl(
+                                            Uri.parse(
+                                                'https://www.crunchyroll.com/search?from=&q=${widget.mediaItem.attributes.canonicalTitle}'),
+                                          );
+                                        },
+                                        child: buildServiceBox(
+                                            AssetsManager.crunchyroll))
+                                  ],
+                                )
                         ],
                       ),
                     )
@@ -243,10 +266,10 @@ class _AnimeDetailsScreenState extends State<AnimeDetailsScreen> {
           mediaId: widget.mediaItem.id,
         );
       case "Reactions":
-      return ReactionScreen(
+        return ReactionScreen(
           isAnime: widget.mediaItem.type == "anime" ? true : false,
           mediaId: widget.mediaItem.id,
-      );
+        );
 
       default:
         return Container(

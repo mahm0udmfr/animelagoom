@@ -47,8 +47,8 @@ class CharactersScreen extends StatelessWidget {
           itemBuilder: (context, index) {
             final character = characters[index];
             return CharacterCard(
-                imageUrl: character.imageUrl!,
-              name:character.name ,
+              imageUrl: character.imageUrl ?? 'https://via.placeholder.com/150',
+              name: character.name,
             );
             //   ListTile(
             //   leading: character.imageUrl != null
@@ -71,4 +71,3 @@ class CharactersScreen extends StatelessWidget {
     );
   }
 }
-
