@@ -1,5 +1,4 @@
 import 'package:animelagoom/models/episode_model.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:animelagoom/core/api/api_manager.dart';
 import 'package:animelagoom/Services/anime_service.dart';
@@ -68,7 +67,7 @@ class _EpisodesScreenState extends State<EpisodesScreen> {
 
   /// A helper method to build the list view for better code organization.
   Widget _buildItemsList(List<Episode> items) {
-    final itemLabel = widget.mediaType == 'anime' ? 'Episode' : 'Chapter';
+    // final itemLabel = widget.mediaType == 'anime' ? 'Episode' : 'Chapter';
     return ListView.builder(
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,

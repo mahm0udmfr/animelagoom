@@ -1,4 +1,4 @@
-package com.example.animelagoom
+package com.vision.animelagoom
 
 import io.flutter.embedding.android.FlutterActivity
 

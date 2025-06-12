@@ -39,7 +39,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
         isLoadingGenres = false;
       });
     } catch (e) {
-      print("Error fetching genres: $e");
+      // print("Error fetching genres: $e");
       setState(() {
         isLoadingGenres = false;
       });
