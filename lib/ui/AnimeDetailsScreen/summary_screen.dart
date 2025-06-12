@@ -5,6 +5,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../Services/anime_service.dart';
+import '../../models/genere_model.dart';
+import '../../models/genre_selector.dart';
+
 class SummaryScreen extends StatefulWidget {
   final MediaItem anime;
 
@@ -15,7 +19,33 @@ class SummaryScreen extends StatefulWidget {
 }
 
 class _SummaryScreenState extends State<SummaryScreen> {
+  List<Genre>? genres;
+  bool isLoadingGenres = true;
+
   bool isExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    loadGenres();
+  }
+
+  Future<void> loadGenres() async {
+    try {
+      final animeId = widget.anime.id;
+      final genres = await AnimeService.fetchGenresByAnimeId(animeId);
+      setState(() {
+        this.genres = genres;
+        isLoadingGenres = false;
+      });
+    } catch (e) {
+      print("Error fetching genres: $e");
+      setState(() {
+        isLoadingGenres = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final anime = widget.anime;
@@ -55,7 +85,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   child: Text(
                     title,
                     style: AppStyles.bold24BlockRoboto,
-                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                    maxLines: null,
                   ),
                 ),
                 SizedBox(width: 10),
@@ -147,7 +178,14 @@ class _SummaryScreenState extends State<SummaryScreen> {
           ),
 
           SizedBox(height: 15),
-          Chip(label: Text("Genres: ${attributes.subtype} المفروض تتعمل لسة")),
+
+          isLoadingGenres
+              ? const CircularProgressIndicator()
+              : (genres != null && genres!.isNotEmpty
+              ? GenreSelector(genres: genres!)
+              : const Text("No genres available")),
+
+
 SizedBox(height: 15),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),

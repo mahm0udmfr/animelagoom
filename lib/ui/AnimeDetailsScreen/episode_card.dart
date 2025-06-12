@@ -7,11 +7,13 @@ class EpisodeCard extends StatelessWidget {
     required this.imageUrl,
     required this.episodeNumber,
     required this.episodeTitle,
+    required this.mediaType,
   });
 
   final String imageUrl;
   final int episodeNumber;
   final String episodeTitle;
+  final String mediaType;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +67,7 @@ class EpisodeCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Episode $episodeNumber',
+                  '${mediaType == 'anime' ? 'Episode' : 'Chapter'} $episodeNumber',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16.0,
